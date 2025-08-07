@@ -1,0 +1,7 @@
+@font-face {
+	font-family: 'variable';
+	src: url('Variable-Bold.eot');
+	src: url('Variable-Bold.eot?#iefix') format('embedded-opentype'),
+		url('Variable-Bold.woff') format('woff'),
+		url('Variable-Bold.svg') format('svg');
+}
