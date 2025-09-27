@@ -1,0 +1,117 @@
+:root {
+  /* Typography, colors, spacing */
+  --font-main: Inter, Segoe UI, Roboto, Arial, system-ui, sans-serif;
+  --font-size-1: 1.25rem;
+  --font-size-2: 1.5rem;
+  --font-size-3: 2rem;
+  --font-size-4: 2.5rem;
+  --font-size-5: 3rem;
+  --font-weight-bold: 700;
+  --fpi-color: #ed010c;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  --border-radius: 1.25rem;
+  --container-width: 1200px;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2rem;
+  --space-xl: 3rem;
+  --section-anim-duration: 0.8s;
+  --card-anim-duration: 0.6s;
+}
+
+body { font-family: var(--font-main); }
+
+.container { max-width: var(--container-width); margin: 0 auto; padding: 0 var(--space-s); }
+.section { padding: var(--space-xl) 0 var(--space-l); }
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px,1fr));
+  gap: var(--space-m);
+  padding: var(--space-s) 0;
+}
+
+/* ===== Scroll entrance animation using only CSS ===== */
+
+/* Use the :has() selector to trigger animation when child is in the viewport.
+   The child uses the 'scroll-in' attribute which is toggled by the browser as it enters viewport.
+   Use the Intersection Observer polyfill for full browser support if needed, but pure CSS below.
+   You can also use the :target selector for demo, but :has() is preferred in modern browsers.
+*/
+
+@media (prefers-reduced-motion: no-preference) {
+  .section,
+  .hero,
+  .article__container {
+    opacity: 0;
+    transform: translateY(64px);
+    transition:
+      opacity var(--section-anim-duration) cubic-bezier(.215,.61,.355,1),
+      transform var(--section-anim-duration) cubic-bezier(.215,.61,.355,1);
+    will-change: opacity, transform;
+  }
+  .section:has(.scrolled-in),
+  .hero:has(.scrolled-in),
+  .article__container:has(.scrolled-in) {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Cards scale-in */
+  .feature-card,
+  .card {
+    opacity: 0;
+    transform: scale(.92);
+    transition:
+      opacity var(--card-anim-duration) cubic-bezier(.215,.61,.355,1),
+      transform var(--card-anim-duration) cubic-bezier(.215,.61,.355,1);
+    will-change: opacity, transform;
+  }
+  .feature-card.scrolled-in,
+  .card.scrolled-in {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Fallback for browsers without :has() support: use .scrolled-in directly */
+.section.scrolled-in,
+.hero.scrolled-in,
+.article__container.scrolled-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===== Demo style for marking scrolled-in cards/sections in HTML ===== */
+/* Add .scrolled-in to cards/sections with JS or via :has() selector above */
+
+/* Other layout/style from previous CSS */
+.feature-card, .card {
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: var(--space-l);
+  display: flex; flex-direction: column; gap: var(--space-s);
+}
+.feature-title { font-size: var(--font-size-2); font-weight: var(--font-weight-bold); margin-bottom: .5rem; }
+.body-text { font-size: 1rem; color: #444; }
+.headline { font-size: var(--font-size-3); font-weight: var(--font-weight-bold); margin-bottom: var(--space-m);}
+.subheadline { font-size: var(--font-size-1); font-weight: 500; color: var(--fpi-color); margin-bottom: var(--space-s); }
+.site-footer {
+  text-align: center;
+  padding: var(--space-m) 0;
+  border-top: 2px solid var(--fpi-color);
+  background: #fff3f3;
+  color: #7a7e83;
+  font-size: 1rem;
+  margin-top: var(--space-xl);
+}
+.site-footer a { color: var(--fpi-color); text-decoration: none; }
+.site-footer a:hover { text-decoration: underline; }
+@media (max-width: 900px) {
+  .container, .article__main, .article__container { padding: 0 var(--space-s); }
+  .feature-card, .card { padding: var(--space-m); }
+}
+@media (max-width: 600px) {
+  .grid-container { grid-template-columns: 1fr; }
+  .feature-title { font-size: var(--font-size-1); }
+}

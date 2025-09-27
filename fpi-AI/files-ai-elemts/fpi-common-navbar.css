@@ -1,0 +1,135 @@
+/* ======= FPI | COMMON NAVBAR STYLES ======= */
+:root {
+  --fpi-color: #ed010c;
+  --navbar-height: 64px;
+  --navbar-bg: #fff;
+  --navbar-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  --navbar-radius: 0;
+  --navbar-padding: 1rem 2rem;
+  --logo-size: 44px;
+  --nav-link-font-size: 1.1rem;
+  --nav-link-padding: 0.75rem 1rem;
+  --nav-link-color: #a30909;
+  --nav-link-hover: #ed010c;
+  --navbar-z: 100;
+}
+
+.top-nav {
+  background-color: var(--navbar-bg);
+  box-shadow: var(--navbar-shadow);
+  padding: var(--navbar-padding);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: var(--navbar-z);
+  min-height: var(--navbar-height);
+}
+
+.ap-brand, .-ap-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo, .-brand--logo {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  fill: var(--fpi-color);
+  flex-shrink: 0;
+}
+
+.brand-title, .-brand--title {
+  font-weight: 400;
+  font-size: 1.5rem;
+  margin-left: 8px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s;
+}
+.logo:hover .brand-logo,
+.logo:hover .brand-title {
+  color: var(--fpi-color);
+  fill: var(--fpi-color);
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  gap: 1.5rem;
+}
+
+.main-nav li {
+  margin: 0;
+}
+
+.nav-link {
+  font-size: var(--nav-link-font-size);
+  color: var(--nav-link-color);
+  text-decoration: none;
+  padding: var(--nav-link-padding);
+  display: block;
+  transition: color 0.3s;
+  border-radius: 4px;
+}
+.nav-link:hover,
+.nav-link:focus {
+  color: var(--nav-link-hover);
+  background: rgba(237,1,12,0.06);
+  text-decoration: underline;
+}
+
+.mobile-menu-button {
+  background: none;
+  border: none;
+  color: var(--fpi-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .main-nav ul {
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--navbar-bg);
+    position: absolute;
+    top: var(--navbar-height);
+    left: 0;
+    width: 100%;
+    box-shadow: var(--navbar-shadow);
+    padding: 1rem;
+    z-index: var(--navbar-z);
+    display: none;
+  }
+  .main-nav.open ul {
+    display: flex;
+  }
+  .main-nav {
+    display: none;
+    position: relative;
+  }
+  .main-nav.open {
+    display: block;
+  }
+  .mobile-menu-button {
+    display: block;
+  }
+}
+
+/* Utility */
+.fpi--colr { color: var(--fpi-color); fill: var(--fpi-color); }
+.variable { font-family: fpivariable, 'Arial', sans-serif; }

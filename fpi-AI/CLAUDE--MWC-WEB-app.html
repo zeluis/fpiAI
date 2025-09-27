@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material Design 3 Web App</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --md-sys-color-primary: #6750a4;
+        --md-sys-color-on-primary: #ffffff;
+        --md-sys-color-primary-container: #eaddff;
+        --md-sys-color-on-primary-container: #21005d;
+        --md-sys-color-secondary: #625b71;
+        --md-sys-color-on-secondary: #ffffff;
+        --md-sys-color-secondary-container: #e8def8;
+        --md-sys-color-on-secondary-container: #1d192b;
+        --md-sys-color-tertiary: #7d5260;
+        --md-sys-color-on-tertiary: #ffffff;
+        --md-sys-color-tertiary-container: #ffd8e4;
+        --md-sys-color-on-tertiary-container: #31111d;
+        --md-sys-color-error: #b3261e;
+        --md-sys-color-on-error: #ffffff;
+        --md-sys-color-error-container: #f9dedc;
+        --md-sys-color-on-error-container: #410e0b;
+        --md-sys-color-background: #fffbfe;
+        --md-sys-color-on-background: #1c1b1f;
+        --md-sys-color-surface: #fffbfe;
+        --md-sys-color-on-surface: #1c1b1f;
+        --md-sys-color-surface-variant: #e7e0ec;
+        --md-sys-color-on-surface-variant: #49454f;
+        --md-sys-color-outline: #79747e;
+        --md-sys-color-outline-variant: #cac4d0;
+        --md-sys-color-shadow: #000000;
+        --md-sys-color-scrim: #000000;
+        --md-sys-color-inverse-surface: #313033;
+        --md-sys-color-inverse-on-surface: #f4eff4;
+        --md-sys-color-inverse-primary: #d0bcff;
+        --md-sys-color-surface-dim: #ded8e1;
+        --md-sys-color-surface-bright: #fdf7ff;
+        --md-sys-color-surface-container-lowest: #ffffff;
+        --md-sys-color-surface-container-low: #f7f2fa;
+        --md-sys-color-surface-container: #f3edf7;
+        --md-sys-color-surface-container-high: #ece6f0;
+        --md-sys-color-surface-container-highest: #e6e0e9;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        line-height: 1.6;
+        color: var(--md-sys-color-on-background);
+        background-color: var(--md-sys-color-background);
+      }
+
+      .app-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background-color: var(--md-sys-color-surface);
+        color: var(--md-sys-color-on-surface);
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        z-index: 1000;
+        transition: opacity 0.3s, transform 0.3s;
+      }
+
+      .app-bar.hidden {
+        opacity: 0;
+        transform: translateY(-100%);
+      }
+
+      .app-bar-logo {
+        font-size: 20px;
+        font-weight: 500;
+      }
+
+      .app-bar-nav {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+      }
+
+      .app-bar-nav a {
+        color: var(--md-sys-color-on-surface);
+        text-decoration: none;
+        padding: 8px 16px;
+        transition: background-color 0.3s;
+      }
+
+      .app-bar-nav a:hover {
+        background-color: var(--md-sys-color-surface-variant);
+      }
+
+      .app-bar-social {
+        display: flex;
+        align-items: center;
+        margin-left: 16px;
+      }
+
+      .app-bar-social a {
+        color: var(--md-sys-color-on-surface);
+        text-decoration: none;
+        padding: 8px;
+        transition: color 0.3s;
+      }
+
+      .app-bar-social a:hover {
+        color: var(--md-sys-color-primary);
+      }
+
+      .login-button {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .login-button:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      .nav-drawer {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100%;
+        background-color: var(--md-sys-color-surface);
+        z-index: 1001;
+        transition: left 0.3s;
+        padding-top: 64px;
+      }
+
+      .nav-drawer.open {
+        left: 0;
+      }
+
+      .nav-drawer a {
+        display: block;
+        padding: 16px;
+        color: var(--md-sys-color-on-surface);
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .nav-drawer a:hover {
+        background-color: var(--md-sys-color-surface-variant);
+      }
+
+      .main-content {
+        padding-top: 64px;
+      }
+
+      .hero-header {
+        height: 50vh;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+      }
+
+      .article {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 32px 16px;
+      }
+
+      .article h1 {
+        font-size: 36px;
+        margin-bottom: 16px;
+      }
+
+      .article h2 {
+        font-size: 24px;
+        margin-bottom: 8px;
+        color: var(--md-sys-color-secondary);
+      }
+
+      .article-meta {
+        font-size: 14px;
+        color: var(--md-sys-color-on-surface-variant);
+        margin-bottom: 16px;
+      }
+
+      .split-panel {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .split-panel-content,
+      .split-panel-image {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .split-panel-image img {
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
+        object-fit: cover;
+      }
+
+      .split-panel-content {
+        padding: 32px;
+        background-color: var(--md-sys-color-surface);
+      }
+
+      .blogs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        padding: 32px 16px;
+      }
+
+      .blog-card {
+        background-color: var(--md-sys-color-surface);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .blog-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .blog-card-content {
+        padding: 16px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .blog-card h3 {
+        font-size: 20px;
+        margin-bottom: 8px;
+      }
+
+      .blog-card p {
+        font-size: 14px;
+        color: var(--md-sys-color-on-surface-variant);
+        margin-bottom: 16px;
+      }
+
+      .blog-card .read-more {
+        margin-top: auto;
+        align-self: flex-start;
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .blog-card .read-more:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      .contact-split {
+        display: flex;
+        height: calc(50vh - 64px);
+      }
+
+      .contact-form,
+      .contact-info {
+        flex: 1;
+        padding: 32px;
+      }
+
+      .contact-form form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        margin-bottom: 16px;
+        padding: 8px;
+        border: 1px solid var(--md-sys-color-outline);
+        border-radius: 4px;
+      }
+
+      .contact-form button {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .contact-form button:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      .contact-info {
+        background-color: var(--md-sys-color-surface-variant);
+        color: var(--md-sys-color-on-surface-variant);
+      }
+
+      .footer {
+        background-color: var(--md-sys-color-surface-variant);
+        color: var(--md-sys-color-on-surface-variant);
+        padding: 32px 16px;
+        text-align: center;
+      }
+
+      .footer-links {
+        margin-bottom: 16px;
+      }
+
+      .footer-links a {
+        color: var(--md-sys-color-on-surface-variant);
+        text-decoration: none;
+        margin: 0 8px;
+      }
+
+      .footer-social a {
+        color: var(--md-sys-color-on-surface-variant);
+        text-decoration: none;
+        margin: 0 8px;
+        font-size: 24px;
+      }
+
+      @media (max-width: 768px) {
+        .app-bar-nav {
+          display: none;
+        }
+
+        .split-panel,
+        .contact-split {
+          flex-direction: column;
+        }
+
+        .split-panel-content,
+        .split-panel-image,
+        .contact-form,
+        .contact-info {
+          height: 50vh;
+        }
+      }
+
+      .menu-button {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--md-sys-color-on-surface);
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        .menu-button {
+          display: block;
+        }
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1002;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: var(--md-sys-color-surface);
+        margin: 15% auto;
+        padding: 32px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .close {
+        color: var(--md-sys-color-on-surface-variant);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .close:hover {
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .modal-content h2 {
+        margin-bottom: 24px;
+        color: var(--md-sys-color-on-surface);
+      }
+
+      .modal-content form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .modal-content .input-container {
+        position: relative;
+        margin-bottom: 24px;
+      }
+
+      .modal-content input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--md-sys-color-outline);
+        border-radius: 4px;
+        font-size: 16px;
+        background-color: var(--md-sys-color-surface);
+        color: var(--md-sys-color-on-surface);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .modal-content input:focus {
+        outline: none;
+        border-color: var(--md-sys-color-primary);
+        box-shadow: 0 0 0 2px var(--md-sys-color-primary-container);
+      }
+
+      .modal-content label {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--md-sys-color-on-surface-variant);
+        transition: all 0.3s;
+        pointer-events: none;
+      }
+
+      .modal-content input:focus + label,
+      .modal-content input:not(:placeholder-shown) + label {
+        top: 0;
+        font-size: 12px;
+        background-color: var(--md-sys-color-surface);
+        padding: 0 4px;
+      }
+
+      .modal-content button {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .modal-content button:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      /* Topbar */
+      .topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: #6200ea; /* Primary color */
+        color: white;
+        padding: 1rem;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .topbar-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .topbar h1 {
+        margin: 0;
+      }
+
+      #menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+      }
+
+      /* Side Navigation */
+      .sidenav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 250px;
+        background-color: #ffffff; /* Background color */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+      }
+
+      .sidenav button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+      }
+
+      .sidenav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidenav ul li {
+        padding: 1rem;
+      }
+
+      .sidenav ul li a {
+        text-decoration: none;
+        color: #333;
+      }
+
+      /* Main Content */
+      main {
+        margin-top: 4rem; /* Adjust for the fixed topbar */
+        padding: 2rem;
+      }
+
+      /* Footer */
+      footer {
+        background-color: #6200ea; /* Primary color */
+        color: white;
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .social-media a {
+        margin: 0 0.5rem;
+        display: inline-block;
+      }
+
+      .social-media img {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .sidenav {
+          width: 200px;
+        }
+      }
+
+      /* Animations */
+      @keyframes slideIn {
+        from {
+          transform: translateY(-100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideOut {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-100%);
+        }
+      }
+
+      /* JavaScript-Handled Styles */
+      .hide-topbar {
+        transform: translateY(-100%);
+      }
+
+      .show-topbar {
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-bar">
+      <button class="menu-button">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <div class="app-bar-logo">Logo</div>
+      <nav class="app-bar-nav" id="topbar">
+        <a href="#home">Home</a>
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="app-bar-social">
+        <a href="#" aria-label="Share on Facebook">
+          <span class="material-symbols-outlined">facebook</span>
+        </a>
+        <a href="#" aria-label="Share on Twitter">
+          <span class="material-symbols-outlined">psychology</span>
+        </a>
+      </div>
+      <button id="menu-toggle" aria-label="Toggle navigation">
+        ☰
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <button class="login-button">Login</button>
+
+      <aside class="sidenav" id="sidenav">
+        <button id="close-sidenav" aria-label="Close navigation">×</button>
+        <ul>
+          <li><a href="#section1">Economic Loss Estimates</a></li>
+          <li><a href="#section2">Reparations Calculation</a></li>
+          <li><a href="#section3">Impact of Systemic Racism</a></li>
+        </ul>
+      </aside>
+    </header>
+
+    <nav class="nav-drawer">
+      <a href="#home">Home</a>
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <main class="main-content">
+      <section id="home" class="split-panel">
+        <div class="split-panel-content">
+          <div>
+            <header>
+              <nav>
+                <ul>
+                  <li><a href="#introduction">Introduction</a></li>
+                  <li>
+                    <a href="#mechanisms">Mechanisms of Systemic Racism</a>
+                  </li>
+                  <li><a href="#reparations">Reparations</a></li>
+                </ul>
+              </nav>
+            </header>
+            <h1>Welcome to Our Site</h1>
+            <p>Discover amazing content and services.</p>
+            <button class="login-button">Get Started</button>
+            <button class="login-button">Learn More</button>
+          </div>
+        </div>
+        <div class="split-panel-image">
+          <img src="https://picsum.photos/1920/1080" alt="Welcome image" />
+        </div>
+      </section>
+
+      <section id="work">
+        <div
+          class="hero-header"
+          style="background-image: url('https://picsum.photos/1200/800')"
+        >
+          <h1>Our Work</h1>
+        </div>
+        <article class="article">
+          <h2>Innovative Solutions</h2>
+          <div class="article-meta">
+            <span>By John Doe</span>
+            <span>September 13, 2024</span>
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </p>
+          <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+            cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
+          </p>
+          <p>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+            accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
+            quae ab illo inventore veritatis et quasi architecto beatae vitae
+            dicta sunt explicabo.
+          </p>
+        </article>
+      </section>
+
+      <section id="about">
+        <div
+          class="hero-header"
+          style="background-image: url('https://picsum.photos/1200/801')"
+        >
+          <h1>About Us</h1>
+        </div>
+        <article class="article">
+          <h2>Our Story</h2>
+          <div class="article-meta">
+            <span>By Jane Smith</span>
+            <span>September 12, 2024</span>
+          </div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </p>
+          <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+            cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
+          </p>
+          <p>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+            accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
+            quae ab illo inventore veritatis et quasi architecto beatae vitae
+            dicta sunt explicabo.
+          </p>
+        </article>
+      </section>
+
+      <section id="blog">
+        <div
+          class="hero-header"
+          style="background-image: url('https://picsum.photos/1200/802')"
+        >
+          <h1>Our Blog</h1>
+        </div>
+        <div class="blogs-grid">
+          <div class="blog-card">
+            <img src="https://picsum.photos/300/200" alt="Blog post 1" />
+            <div class="blog-card-content">
+              <h3>Blog Post 1</h3>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              <a href="#" class="read-more">Read More</a>
+            </div>
+          </div>
+          <div class="blog-card">
+            <img src="https://picsum.photos/300/201" alt="Blog post 2" />
+            <div class="blog-card-content">
+              <h3>Blog Post 2</h3>
+              <p>
+                Sed do eiusmod tempor incididunt ut labore et dolore magna
+                aliqua.
+              </p>
+              <a href="#" class="read-more">Read More</a>
+            </div>
+          </div>
+          <div class="blog-card">
+            <img src="https://picsum.photos/300/202" alt="Blog post 3" />
+            <div class="blog-card-content">
+              <h3>Blog Post 3</h3>
+              <p>
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                laboris.
+              </p>
+              <a href="#" class="read-more">Read More</a>
+            </div>
+          </div>
+          <div class="blog-card">
+            <img src="https://picsum.photos/300/203" alt="Blog post 4" />
+            <div class="blog-card-content">
+              <h3>Blog Post 4</h3>
+              <p>
+                Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum.
+              </p>
+              <a href="#" class="read-more">Read More</a>
+            </div>
+          </div>
+          <div class="blog-card">
+            <img src="https://picsum.photos/300/204" alt="Blog post 5" />
+            <div class="blog-card-content">
+              <h3>Blog Post 5</h3>
+              <p>
+                Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                qui.
+              </p>
+              <a href="#" class="read-more">Read More</a>
+            </div>
+          </div>
+          <div class="blog-card">
+            <img src="https://picsum.photos/300/205" alt="Blog post 6" />
+            <div class="blog-card-content">
+              <h3>Blog Post 6</h3>
+              <p>
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem.
+              </p>
+              <a href="#" class="read-more">Read More</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="section1">
+        <h2>Economic Loss Estimates</h2>
+        <p>Content detailing the economic losses...</p>
+      </section>
+      <section id="section2">
+        <h2>Reparations Calculation</h2>
+        <p>Content detailing reparations estimates...</p>
+      </section>
+      <section id="section3">
+        <h2>Impact of Systemic Racism</h2>
+        <p>Content detailing systemic racism impact...</p>
+      </section>
+
+      <section id="introduction">
+        <h1>Systemic Racism in Europe</h1>
+        <p>
+          Systemic racism is a pervasive issue in Europe, perpetuating racial
+          disparities and inequalities.
+        </p>
+      </section>
+      <section id="mechanisms">
+        <h2>Mechanisms of Systemic Racism</h2>
+        <ul>
+          <li><a href="#institutional-racism">Institutional Racism</a></li>
+          <li><a href="#racial-profiling">Racial Profiling</a></li>
+          <li>
+            <a href="#discrimination-in-the-labor-market"
+              >Discrimination in the Labor Market</a
+            >
+          </li>
+          <li><a href="#education">Education</a></li>
+          <li><a href="#media-representation">Media Representation</a></li>
+        </ul>
+        <section id="institutional-racism">
+          <h3>Institutional Racism</h3>
+          <p>
+            Institutional racism refers to the ways in which institutions
+            perpetuate racial disparities and inequalities.
+          </p>
+        </section>
+        <section id="racial-profiling">
+          <h3>Racial Profiling</h3>
+          <p>
+            Racial profiling refers to the practice of targeting individuals
+            based on their race or ethnicity.
+          </p>
+        </section>
+        <section id="discrimination-in-the-labor-market">
+          <h3>Discrimination in the Labor Market</h3>
+          <p>
+            Discrimination in the labor market refers to the ways in which
+            people of color face barriers in accessing employment opportunities.
+          </p>
+        </section>
+        <section id="education">
+          <h3>Education</h3>
+          <p>
+            Education refers to the ways in which institutions perpetuate racial
+            disparities and inequalities through their policies and practices.
+          </p>
+        </section>
+        <section id="media-representation">
+          <h3>Media Representation</h3>
+          <p>
+            Media representation refers to the ways in which the media
+            perpetuate racial stereotypes and biases.
+          </p>
+        </section>
+      </section>
+      <section id="reparations">
+        <h2>Reparations</h2>
+        <p>
+          Reparations for Africa and African-descendant populations in Europe
+          and the Americas could be around $50 trillion to $150 trillion USD.
+        </p>
+      </section>
+
+      <section id="contact" class="contact-split">
+        <div class="contact-form">
+          <h2>Contact Us</h2>
+          <form>
+            <input type="text" placeholder="Name" required />
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required></textarea>
+            <button type="submit">Send</button>
+          </form>
+        </div>
+        <div
+          class="contact-info"
+          style="background-image: url('https://picsum.photos/800/600')"
+        >
+          <div class="card">
+            <h3>Get in Touch</h3>
+            <p>
+              We'd love to hear from you! Feel free to reach out with any
+              questions or inquiries.
+            </p>
+            <p>Email: info@example.com</p>
+            <p>Phone: (123) 456-7890</p>
+            <p>Address: 123 Main St, Anytown, USA</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#blog">Blog</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook">
+          <span class="material-symbols-outlined">facebook</span>
+        </a>
+        <a href="#" aria-label="Twitter">
+          <span class="material-symbols-outlined">psychology</span>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <span class="material-symbols-outlined">instagram</span>
+        </a>
+      </div>
+      <p>&copy; 2024 Your Company Name. All rights reserved.</p>
+    </footer>
+
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Login</h2>
+        <form>
+          <div class="input-container">
+            <input type="email" id="email" placeholder=" " required />
+            <label for="email">Email</label>
+          </div>
+          <div class="input-container">
+            <input type="password" id="password" placeholder=" " required />
+            <label for="password">Password</label>
+          </div>
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Navigation drawer functionality
+      const menuButton = document.querySelector(".menu-button");
+      const navDrawer = document.querySelector(".nav-drawer");
+
+      menuButton.addEventListener("click", () => {
+        navDrawer.classList.toggle("open");
+      });
+
+      // Close nav drawer when clicking outside
+      document.addEventListener("click", (event) => {
+        if (
+          !navDrawer.contains(event.target) &&
+          !menuButton.contains(event.target)
+        ) {
+          navDrawer.classList.remove("open");
+        }
+      });
+
+      // App bar hide on scroll
+      let lastScrollTop = 0;
+      const appBar = document.querySelector(".app-bar");
+
+      window.addEventListener("scroll", () => {
+        const scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop) {
+          appBar.classList.add("hidden");
+        } else {
+          appBar.classList.remove("hidden");
+        }
+        lastScrollTop = scrollTop;
+      });
+
+      // Login modal functionality
+      const loginButton = document.querySelector(".login-button");
+      const loginModal = document.getElementById("loginModal");
+      const closeButton = document.querySelector(".close");
+
+      loginButton.addEventListener("click", () => {
+        loginModal.style.display = "block";
+      });
+
+      closeButton.addEventListener("click", () => {
+        loginModal.style.display = "none";
+      });
+
+      window.addEventListener("click", (event) => {
+        if (event.target == loginModal) {
+          loginModal.style.display = "none";
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const topbar = document.getElementById("topbar");
+        const sidenav = document.getElementById("sidenav");
+        const menuToggle = document.getElementById("menu-toggle");
+        const closeSidenav = document.getElementById("close-sidenav");
+
+        let lastScrollTop = 0;
+
+        window.addEventListener("scroll", () => {
+          const scrollTop =
+            window.pageYOffset || document.documentElement.scrollTop;
+          if (scrollTop > lastScrollTop) {
+            topbar.classList.add("hide-topbar");
+          } else {
+            topbar.classList.remove("hide-topbar");
+          }
+          lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+        });
+
+        menuToggle.addEventListener("click", () => {
+          sidenav.style.transform = "translateX(0)";
+        });
+
+        closeSidenav.addEventListener("click", () => {
+          sidenav.style.transform = "translateX(-100%)";
+        });
+      });
+    </script>
+  </body>
+</html>

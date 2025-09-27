@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>fpids | Interactive Design Studio</title>
+  <link rel="manifest" href="favicons/manifest.json"/>
+  <link rel="icon" type="image/svg+xml" href="fpi--logo.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon-180x180.png" />
+  <!-- ======= COMMON NAVBAR + THEME STYLES ======= -->
+  <style>
+:root {
+  --fpi-color: #ed010c;
+  --navbar-height: 64px;
+  --navbar-bg: #fff;
+  --navbar-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  --logo-size: 44px;
+  --nav-link-font-size: 1.1rem;
+  --nav-link-padding: 0.75rem 1rem;
+  --nav-link-color: #a30909;
+  --nav-link-hover: #ed010c;
+  --navbar-z: 100;
+  --brand-title-color: var(--fpi-color);
+  --theme-toggle-bg: transparent;
+  --theme-toggle-color: #ed010c;
+  --theme-toggle-size: 2rem;
+  --theme-toggle-radius: 100px;
+  --theme-toggle-hover: #fff0f0;
+  --section-padding: 3.5rem 0;
+  --container-width: 1200px;
+  --border-radius: 10px;
+}
+
+body {
+  background: #fff;
+  color: #212121;
+  font-family: system-ui, Arial, sans-serif;
+  margin: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+body.dark-theme {
+  --navbar-bg: #23272f;
+  --navbar-shadow: 0 1px 6px rgba(0,0,0,0.18);
+  --nav-link-color: #f3a5a5;
+  --nav-link-hover: #fff;
+  --brand-title-color: #fff;
+  background: #181920;
+  color: #ececec;
+}
+
+.top-nav {
+  background: var(--navbar-bg);
+  box-shadow: var(--navbar-shadow);
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky; top: 0; z-index: var(--navbar-z);
+  min-height: var(--navbar-height);
+}
+
+.ap-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-logo { width: var(--logo-size); height: var(--logo-size); fill: var(--fpi-color); }
+.brand-title { font-weight: 500; font-size: 1.5rem; color: var(--brand-title-color); margin-left: 8px; }
+
+.logo { display: flex; align-items: center; text-decoration: none; color: inherit; transition: color 0.3s; }
+.logo:hover .brand-logo, .logo:hover .brand-title { color: var(--fpi-color); fill: var(--fpi-color); }
+
+.main-nav { display: flex; align-items: center; }
+.main-nav ul { list-style: none; display: flex; margin: 0; padding: 0; gap: 1.2rem; }
+.main-nav li { margin: 0; }
+.nav-link {
+  font-size: var(--nav-link-font-size);
+  color: var(--nav-link-color);
+  text-decoration: none;
+  padding: var(--nav-link-padding);
+  border-radius: 4px;
+  transition: color 0.3s, background 0.3s;
+}
+.nav-link:hover,.nav-link:focus { color: var(--nav-link-hover); background: rgba(237,1,12,0.06); text-decoration: underline; }
+
+.mobile-menu-button {
+  background: none; border: none; color: var(--fpi-color); font-size: 1.5rem;
+  cursor: pointer; display: none; margin-left: 1rem;
+}
+.theme-toggle {
+  background: var(--theme-toggle-bg); color: var(--theme-toggle-color);
+  border: none; border-radius: var(--theme-toggle-radius);
+  font-size: var(--theme-toggle-size); margin-left: 0.5rem; cursor: pointer;
+  padding: 0.25em 0.6em; transition: background 0.2s, color 0.2s;
+}
+.theme-toggle:hover, .theme-toggle:focus { background: var(--theme-toggle-hover); outline: none; }
+.theme-icon { font-size: 1.5em; line-height: 1; }
+
+@media (max-width: 767px) {
+  .main-nav ul {
+    flex-direction: column;
+    gap: 1rem;
+    background: var(--navbar-bg);
+    position: absolute;
+    top: var(--navbar-height); left: 0; width: 100vw;
+    box-shadow: var(--navbar-shadow); padding: 1rem; z-index: var(--navbar-z);
+    display: none;
+  }
+  .main-nav.open ul { display: flex; }
+  .main-nav { display: none; position: relative; }
+  .main-nav.open { display: block; }
+  .mobile-menu-button { display: block; }
+}
+
+/* ======= Layout ======= */
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.section { padding: var(--section-padding); }
+.section + .section { border-top: 1px solid #eee; }
+.hero {
+  background: linear-gradient(90deg,#ffe4e1 50%,#fff7f2 100%);
+  text-align: center; padding: 8vw 0 5vw; margin-bottom: 0;
+  position: relative;
+}
+.hero-container { max-width: 700px; margin: 0 auto; }
+.hero h1 { font-size: 3rem; font-weight: 700; margin-bottom: 1.2rem; }
+.hero p { font-size: 1.3rem; color: #7a7e83; margin-bottom: 2.5rem; }
+.hero a, .hero button {
+  background: var(--fpi-color); color: #fff; border: none; border-radius: 100px;
+  padding: 1rem 2rem; font-size: 1.15rem; margin: 1rem auto 0; font-weight: 500;
+  text-decoration: none; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: background 0.2s;
+}
+.hero a:hover, .hero button:hover { background: #b1100b; }
+
+.grid-container {
+  display: grid; grid-template-columns: repeat(auto-fit,minmax(270px,1fr));
+  gap: 2rem; padding: 1rem 0;
+}
+.feature-card {
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2rem;
+  transition: box-shadow 0.2s;
+  display: flex; flex-direction: column; gap: 0.7rem;
+}
+.feature-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.13);}
+.feature-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
+.body-text { font-size: 1.05rem; color: #444; }
+
+.article__main, .article__container, .prose {
+  max-width: 800px; margin: 0 auto; padding: 0 1.5rem;
+}
+.headline { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+.subheadline { font-size: 1.15rem; font-weight: 500; color: #ed010c; margin-bottom: 1rem; }
+.site-footer {
+  text-align: center; padding: 2rem 0; border-top: 2px solid var(--fpi-color);
+  background: #fff3f3; color: #7a7e83; font-size: 1rem; margin-top: 3rem;
+}
+.site-footer a { color: var(--fpi-color); text-decoration: none; }
+.site-footer a:hover { text-decoration: underline; }
+
+/* Utility */
+.fpi--colr { color: var(--fpi-color); fill: var(--fpi-color); }
+.variable { font-family: fpivariable, 'Arial', sans-serif; }
+.round { border-radius: 2rem; }
+.full-width { width: 100%; }
+.hide { display: none !important; }
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2rem; }
+  .container, .article__main, .article__container { padding: 0 0.5rem; }
+  .feature-card { padding: 1rem; }
+}
+  </style>
+</head>
+<body>
+<!-- ======= SVG LOGO SYMBOL ======= -->
+<svg style="position: absolute; width: 0; height: 0; overflow: hidden;" xmlns="http://www.w3.org/2000/svg"><defs>
+  <symbol id="logo" viewBox="0 0 50 50">
+    <title>fpi-logo</title>
+    <path id="FPI-LOGO" d="M34.7,2c3,1.3,5.7,3.1,8,5.4c2.3,2.3,4,4.9,5.4,8c1.3,3,2,6.3,2,9.7s-0.6,6.6-2,9.7
+c-1.3,3-3.1,5.7-5.4,8c-2.3,2.3-4.9,4-8,5.4c-3,1.3-6.3,2-9.7,2c-3.5,0-6.6-0.6-9.7-2c-3-1.3-5.7-3.1-8-5.4s-4-4.9-5.4-8
+c-1.3-3-2-6.3-2-9.7V0h24.9C28.4,0,31.6,0.6,34.7,2z M15.5,26.6v-6c0-0.9,0.2-1.6,0.4-2.4c0.3-0.7,0.7-1.4,1.3-2
+c0.6-0.6,1.3-1,2-1.3c0.7-0.3,1.5-0.5,2.3-0.5h3.4c0.9,0,1.6-0.5,2.4-1.4c0.7-1,1.1-1.9,1.1-2.8H21c-1.4,0-2.8,0.3-3.9,0.7
+c-1.2,0.5-2.3,1.2-3.3,2.2c-1,1-1.8,2.1-2.2,3.3c-0.5,1.2-0.7,2.6-0.7,4v10.6c0.6,0,1.2-0.1,1.9-0.3c0.7-0.2,1.2-0.5,1.6-1
+c0.4-0.4,0.7-0.9,0.9-1.4C15.4,27.8,15.5,27.3,15.5,26.6z M36.7,33.1c0.8-0.8,1.4-1.7,1.8-2.7c0.4-1,0.6-2.2,0.6-3.5
+c0-1.2-0.2-2.2-0.6-3.2c-0.4-1-1-1.9-1.9-2.8c-0.8-0.8-1.7-1.4-2.7-1.8s-2.1-0.6-3.2-0.6c-1.1,0-2.1,0.2-3.1,0.6s-1.9,1-2.8,1.9
+c-0.1,0.1-0.2,0.2-0.2,0.3c-0.1,0.1-0.2,0.2-0.2,0.3c0.3-0.5,0.6-1,0.8-1.6c0.2-0.6,0.3-1,0.3-1.3h-8c-0.3,0-0.5,0.1-0.8,0.2
+s-0.5,0.3-0.6,0.5c-0.2,0.2-0.3,0.4-0.4,0.6c-0.1,0.2-0.2,0.5-0.2,0.9c0,0.3,0.1,0.5,0.1,0.9c0.1,0.3,0.2,0.5,0.4,0.8
+c0.2,0.2,0.5,0.4,0.9,0.5c0.4,0.2,0.7,0.2,1,0.2h4.4c0.3,0,0.5-0.1,0.8-0.2c0.3-0.2,0.5-0.3,0.7-0.5c-0.5,0.7-0.9,1.4-1.1,2.2
+s-0.4,1.6-0.4,2.6v12.7c0.4,0,1-0.1,1.7-0.3c0.7-0.2,1.2-0.5,1.6-0.9c0.4-0.4,0.6-0.7,0.8-1.2c0.2-0.4,0.3-0.9,0.3-1.3v-0.6h4
+c1.1,0,2.2-0.2,3.1-0.6C34.9,34.5,35.9,33.9,36.7,33.1z M30.8,22.8c0.5,0,1.1,0.1,1.5,0.3s1,0.5,1.4,0.9c0.4,0.4,0.6,0.9,0.9,1.4
+c0.2,0.5,0.3,1,0.3,1.6c0,0.6-0.1,1.1-0.3,1.6c-0.2,0.5-0.5,1-0.9,1.4c-0.4,0.4-0.9,0.7-1.3,1c-0.4,0.2-1,0.3-1.6,0.3h-4v-4.1
+c0-0.6,0.1-1.1,0.3-1.6c0.2-0.5,0.5-1,0.9-1.4c0.4-0.4,0.9-0.7,1.3-1C29.7,22.9,30.3,22.8,30.8,22.8z" />
+  </symbol>
+</defs></svg>
+
+<!-- ======= TOP NAVBAR ======= -->
+<header class="top-nav" id="top-nav">
+  <div class="ap-brand">
+    <a href="#hero" class="logo">
+      <svg class="brand-logo" aria-hidden="true">
+        <use class="fpi--colr" xlink:href="#logo"></use>
+      </svg>
+      <span class="brand-title variable fpi--colr">fpids</span>
+    </a>
+  </div>
+  <nav class="main-nav" id="main-nav">
+    <ul>
+      <li><a href="#studio" class="nav-link">Studio</a></li>
+      <li><a href="#blog" class="nav-link">Blog</a></li>
+      <li><a href="#stories" class="nav-link">Stories</a></li>
+      <li><a href="#projects" class="nav-link">Projects</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+  <button class="mobile-menu-button" id="mobile-menu-button" aria-label="Toggle Menu">☰</button>
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light theme">
+    <span class="theme-icon" id="theme-icon">🌙</span>
+  </button>
+</header>
+
+<!-- ======= HERO SECTION ======= -->
+<section id="hero" class="section hero">
+  <div class="hero-container">
+    <h1>Explore Innovative Projects</h1>
+    <p>Discover cutting-edge experiments and technologies. <br>
+      Online branding, interactive design &amp; video production services from Switzerland.</p>
+    <a href="#studio" class="btn">Learn More ↓</a>
+  </div>
+</section>
+
+<!-- ======= STUDIO SECTION ======= -->
+<section id="studio" class="section">
+  <div class="container">
+    <h2 class="headline">Studio</h2>
+    <p class="subheadline">Making &amp; creating delightful experiences.</p>
+    <div class="grid-container">
+      <div class="feature-card">
+        <h3 class="feature-title">AI-Powered Insights</h3>
+        <p class="body-text">Explore projects leveraging artificial intelligence to gain new perspectives and solve complex problems.</p>
+        <a href="#" class="body-text">Explore AI Projects →</a>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Future of Interfaces</h3>
+        <p class="body-text">Experiments in UI design and next-gen interaction paradigms.</p>
+        <a href="#" class="body-text">See UI Experiments →</a>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Data Visualization Lab</h3>
+        <p class="body-text">Interactive visualizations that bring data to life.</p>
+        <a href="#" class="body-text">Visit the Data Lab →</a>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Sustainable Tech Initiatives</h3>
+        <p class="body-text">Environmentally friendly &amp; sustainable solutions.</p>
+        <a href="#" class="body-text">Learn about Sustainability →</a>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Quantum Computing Explorations</h3>
+        <p class="body-text">Potential of quantum computing through experiments &amp; theory.</p>
+        <a href="#" class="body-text">Dive into Quantum →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======= BLOG SECTION ======= -->
+<section id="blog" class="section">
+  <div class="container">
+    <h2 class="headline">Blog</h2>
+    <p class="subheadline">Thoughts, Insights &amp; Updates</p>
+    <article class="article__main prose">
+      <h3 class="headline">Responsive Web Design: Why it matters</h3>
+      <p class="body-text">
+        Responsive Web Design completely changed how we build websites for an ever-growing variety of device types and sizes. Oftentimes, designers and developers get stuck pixel-pushing a design into rigid shapes to match design tools, but real web resilience lies in flexibility and adaptation.
+      </p>
+      <p class="body-text">
+        At fpids, we value rigorous analytical thinking, ingenuity, and hands-on problem solving. Our approach combines analytical rigor with curiosity, playful imagination, and an appetite for solving the hardest problems in service to society.
+      </p>
+    </article>
+  </div>
+</section>
+
+<!-- ======= STORIES SECTION ======= -->
+<section id="stories" class="section">
+  <div class="container">
+    <h2 class="headline">Stories</h2>
+    <p class="subheadline">Words &amp; Opinion</p>
+    <div class="feature-card">
+      <p class="body-text">Thought-provoking.<br>Enlightening Perspective.<br>Discursive.</p>
+      <p class="body-text">
+        Explore more or see how <a class="fpi--link" href="#studio">we can help</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ======= PROJECTS SECTION ======= -->
+<section id="projects" class="section">
+  <div class="container">
+    <h2 class="headline">Projects</h2>
+    <p class="subheadline">Recent Work &amp; Case Studies</p>
+    <div class="grid-container">
+      <div class="feature-card">
+        <h3 class="feature-title">Trial at no extra cost for Ubuntu Advantage customers</h3>
+        <p class="body-text">Try Ubuntu Pro for up to 1 year. At the end of the trial, choose the best fit for your future.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Data Visualization Lab</h3>
+        <p class="body-text">Interactive visualizations that bring data to life, offering deeper understanding and uncovering hidden patterns.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Sustainable Tech Initiatives</h3>
+        <p class="body-text">Discover environmentally friendly projects for a better future.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======= ABOUT SECTION ======= -->
+<section id="about" class="section">
+  <div class="container">
+    <h2 class="headline">About</h2>
+    <p class="subheadline">The Polar Bear</p>
+    <article class="article__container">
+      <p class="body-text">
+        The <strong>polar bear (<em>Ursus maritimus</em>)</strong> is a hypercarnivorous species of bear native to the Arctic Circle, encompassing the Arctic Ocean and its surrounding seas and landmasses. It is the largest extant bear species, as well as the largest extant land carnivore.
+        <em>Source: <a href="https://en.wikipedia.org/wiki/Polar_bear">Wikipedia</a></em>
+      </p>
+    </article>
+  </div>
+</section>
+
+<!-- ======= CONTACT SECTION ======= -->
+<section id="contact" class="section">
+  <div class="container">
+    <h2 class="headline">Contact</h2>
+    <p class="subheadline">Get in Touch</p>
+    <div class="feature-card">
+      <p class="body-text">Want to discuss a project or collaborate? <br>
+      Email us at <a href="mailto:info@fpids.ch">info@fpids.ch</a> or use the contact form on our site.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======= FOOTER ======= -->
+<footer class="site-footer">
+  <p>© 2025 by <a href="#hero">fpids</a>. All rights reserved.</p>
+  <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+</footer>
+
+<!-- ======= JS: MOBILE MENU & THEME TOGGLE ======= -->
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  const mobileMenuButton=document.getElementById('mobile-menu-button');
+  const mainNav=document.getElementById('main-nav');
+  mobileMenuButton.addEventListener('click',function(){
+    mainNav.classList.toggle('open');
+  });
+  const themeToggle=document.getElementById('theme-toggle');
+  const themeIcon=document.getElementById('theme-icon');
+  function setTheme(theme){
+    if(theme==='dark'){
+      document.body.classList.add('dark-theme');
+      themeIcon.textContent='☀️';
+    }else{
+      document.body.classList.remove('dark-theme');
+      themeIcon.textContent='🌙';
+    }
+    localStorage.setItem('theme',theme);
+  }
+  let currentTheme=localStorage.getItem('theme');
+  if(!currentTheme){
+    currentTheme=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  }
+  setTheme(currentTheme);
+  themeToggle.addEventListener('click',function(){
+    setTheme(document.body.classList.contains('dark-theme')?'light':'dark');
+  });
+});
+</script>
+</body>
+</html>
