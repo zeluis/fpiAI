@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material Design 3 App</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2rgCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0308, U+0530-058F, U+2010, U+2024, U+25CC, U+FB13-FB17;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2rACIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2,
+          U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7,
+          U+200C-200D, U+20B9, U+25CC, U+A8F1;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2swCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF,
+          U+A640-A69F, U+FE2E-FE2F;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2ugCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2vwCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9,
+          U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2rwCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+1200-1399, U+2D80-2DDE, U+AB01-AB2E, U+1E7E0-1E7E6,
+          U+1E7E8-1E7EB, U+1E7ED-1E7EE, U+1E7F0-1E7FE;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2oQCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0589, U+10A0-10FF, U+1C90-1CBA, U+1CBD-1CBF,
+          U+2D00-2D2F;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2vQCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C,
+          U+038E-03A1, U+03A3-03FF;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2pQCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0951-0952, U+0964-0965, U+0A80-0AFF, U+200C-200D,
+          U+20B9, U+25CC, U+A830-A839;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2nQCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0951-0952, U+0964-0965, U+0A01-0A76, U+200C-200D,
+          U+20B9, U+25CC, U+262C, U+A830-A839;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2vACIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2tQCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2twCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0E81-0EDF, U+200C-200D, U+25CC;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2pwCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0951-0952, U+0964-0965, U+0B01-0B77, U+1CDA, U+1CF2,
+          U+200C-200D, U+20B9, U+25CC;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2owCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0964-0965, U+0D81-0DF4, U+1CF2, U+200C-200D, U+25CC,
+          U+111E1-111F4;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu20ACIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0001-000C, U+000E-001F, U+007F-009F, U+20DD-20E0,
+          U+20E2-20E4, U+2150-218F, U+2190, U+2192, U+2194-2199, U+21AF,
+          U+21E6-21F0, U+21F3, U+2218-2219, U+2299, U+22C4-22C6, U+2300-243F,
+          U+2440-244A, U+2460-24FF, U+25A0-27BF, U+2800-28FF, U+2921-2922,
+          U+2981, U+29BF, U+29EB, U+2B00-2BFF, U+4DC0-4DFF, U+FFF9-FFFB,
+          U+10140-1018E, U+10190-1019C, U+101A0, U+101D0-101FD, U+102E0-102FB,
+          U+10E60-10E7E, U+1D2C0-1D2D3, U+1D2E0-1D37F, U+1F000-1F0FF,
+          U+1F100-1F1AD, U+1F1E6-1F1FF, U+1F30D-1F30F, U+1F315, U+1F31C, U+1F31E,
+          U+1F320-1F32C, U+1F336, U+1F378, U+1F37D, U+1F382, U+1F393-1F39F,
+          U+1F3A7-1F3A8, U+1F3AC-1F3AF, U+1F3C2, U+1F3C4-1F3C6, U+1F3CA-1F3CE,
+          U+1F3D4-1F3E0, U+1F3ED, U+1F3F1-1F3F3, U+1F3F5-1F3F7, U+1F408, U+1F415,
+          U+1F41F, U+1F426, U+1F43F, U+1F441-1F442, U+1F444, U+1F446-1F449,
+          U+1F44C-1F44E, U+1F453, U+1F46A, U+1F47D, U+1F4A3, U+1F4B0, U+1F4B3,
+          U+1F4B9, U+1F4BB, U+1F4BF, U+1F4C8-1F4CB, U+1F4D6, U+1F4DA, U+1F4DF,
+          U+1F4E3-1F4E6, U+1F4EA-1F4ED, U+1F4F7, U+1F4F9-1F4FB, U+1F4FD-1F4FE,
+          U+1F503, U+1F507-1F50B, U+1F50D, U+1F512-1F513, U+1F53E-1F54A,
+          U+1F54F-1F5FA, U+1F610, U+1F650-1F67F, U+1F687, U+1F68D, U+1F691,
+          U+1F694, U+1F698, U+1F6AD, U+1F6B2, U+1F6B9-1F6BA, U+1F6BC,
+          U+1F6C6-1F6CF, U+1F6D3-1F6D7, U+1F6E0-1F6EA, U+1F6F0-1F6F3,
+          U+1F6F7-1F6FC, U+1F700-1F7FF, U+1F800-1F80B, U+1F810-1F847,
+          U+1F850-1F859, U+1F860-1F887, U+1F890-1F8AD, U+1F8B0-1F8B1,
+          U+1F900-1F90B, U+1F93B, U+1F946, U+1F984, U+1F996, U+1F9E9,
+          U+1FA00-1FA6F, U+1FA70-1FA7C, U+1FA80-1FA88, U+1FA90-1FABD,
+          U+1FABF-1FAC5, U+1FACE-1FADB, U+1FAE0-1FAE8, U+1FAF0-1FAF8,
+          U+1FB00-1FBFF;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2qACIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2ogCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0951-0952, U+0964-0965, U+0C00-0C7F, U+1CDA, U+1CF2,
+          U+200C-200D, U+25CC;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2qgCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0E01-0E5B, U+200C-200D, U+25CC;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2sQCIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169,
+          U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309,
+          U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2sACIhM907-0x.woff2)
+          format("woff2");
+        unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F,
+          U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+          U+A720-A7FF;
+      }
+
+      @font-face {
+        font-family: "Google Sans";
+        font-style: normal;
+        font-weight: 475;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesans/v61/4UaRrENHsxJlGDuGo1OIlJfC6mGS6vhAK1YobMu2vgCIhM907w.woff2)
+          format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+          U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC,
+          U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+
+      @font-face {
+        font-family: "Google Symbols";
+        font-style: normal;
+        font-weight: 300 600;
+        font-display: block;
+        src: url(https://fonts.gstatic.com/s/googlesymbols/v291/HhyqU5Ak9u-oMExPeInvcuEmPosC9zS3FYkFU68cPrjdKM1XMoDZlWmzc3IiWvF1SbxVhQidBnv_C-yl9mm4Tw.woff2)
+          format("woff2");
+      }
+
+      .google-symbols {
+        font-family: "Google Symbols";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: "liga";
+        font-feature-settings: "liga";
+        -webkit-font-smoothing: antialiased;
+      }
+
+      :root {
+        --md-sys-color-primary: #006a6a;
+        --md-sys-color-on-primary: #ffffff;
+        --md-sys-color-primary-container: #6ff7f7;
+        --md-sys-color-on-primary-container: #002020;
+        --md-sys-color-secondary: #4a6363;
+        --md-sys-color-on-secondary: #ffffff;
+        --md-sys-color-secondary-container: #cce8e7;
+        --md-sys-color-on-secondary-container: #051f1f;
+        --md-sys-color-tertiary: #4b607c;
+        --md-sys-color-on-tertiary: #ffffff;
+        --md-sys-color-tertiary-container: #d3e4ff;
+        --md-sys-color-on-tertiary-container: #041c35;
+        --md-sys-color-error: #ba1a1a;
+        --md-sys-color-on-error: #ffffff;
+        --md-sys-color-error-container: #ffdad6;
+        --md-sys-color-on-error-container: #410002;
+        --md-sys-color-background: #fafdfc;
+        --md-sys-color-on-background: #191c1c;
+        --md-sys-color-surface: #fafdfc;
+        --md-sys-color-on-surface: #191c1c;
+        --md-sys-color-outline: #6f7979;
+        --md-sys-color-surface-variant: #dae5e4;
+        --md-sys-color-on-surface-variant: #3f4948;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        line-height: 1.6;
+        color: var(--md-sys-color-on-background);
+        background-color: var(--md-sys-color-background);
+      }
+
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        min-block-size: 100vh;
+      }
+
+      .app-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background-color: var(--md-sys-color-surface);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        inset-block-start: 0;
+        z-index: 1000;
+      }
+
+      .app-logo {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: var(--md-sys-color-on-surface);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-link {
+        color: var(--md-sys-color-on-surface);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--md-sys-color-primary);
+      }
+
+      .nav-social {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .nav-login {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .nav-login:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      .hero-header {
+        block-size: 50vh;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+      }
+
+      .article {
+        max-inline-size: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .article-title {
+        font-size: 2.5rem;
+        margin-block-end: 0.5rem;
+      }
+
+      .article-subtitle {
+        font-size: 1.5rem;
+        color: var(--md-sys-color-on-surface-variant);
+        margin-block-end: 1rem;
+      }
+
+      .article-meta {
+        display: flex;
+        gap: 1rem;
+        margin-block-end: 1rem;
+        color: var(--md-sys-color-on-surface-variant);
+      }
+
+      .contact-container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .contact-form,
+      .contact-info {
+        flex: 1 1 300px;
+        padding: 2rem;
+      }
+
+      .contact-form form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .contact-form input,
+      .contact-form textarea {
+        padding: 0.5rem;
+        border: 1px solid var(--md-sys-color-outline);
+        border-radius: 4px;
+      }
+
+      .contact-form button {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .contact-form button:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      .home-split-panel {
+        display: flex;
+        flex-wrap: wrap;
+        min-block-size: calc(100vh - 64px);
+      }
+
+      .home-content,
+      .home-image {
+        flex: 1 1 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .home-image img {
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+        border-radius: 16px;
+      }
+
+      .home-content h1 {
+        font-size: 3rem;
+        margin-block-end: 1rem;
+      }
+
+      .home-content p {
+        font-size: 1.25rem;
+        margin-block-end: 2rem;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .cta-button {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .cta-button:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .blog-card {
+        background-color: var(--md-sys-color-surface);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .blog-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .blog-card-image {
+        block-size: 200px;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .blog-card-content {
+        padding: 1rem;
+      }
+
+      .blog-card-title {
+        font-size: 1.25rem;
+        margin-block-end: 0.5rem;
+      }
+
+      .blog-card-excerpt {
+        font-size: 0.875rem;
+        color: var(--md-sys-color-on-surface-variant);
+      }
+
+      .footer {
+        background-color: var(--md-sys-color-surface-variant);
+        color: var(--md-sys-color-on-surface-variant);
+        padding: 2rem;
+        margin-block-start: auto;
+      }
+
+      .footer-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 2rem;
+      }
+
+      .footer-links,
+      .footer-social {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .footer a {
+        color: var(--md-sys-color-on-surface-variant);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer a:hover {
+        color: var(--md-sys-color-primary);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        inset-inline-start: 0;
+        inset-block-start: 0;
+        inline-size: 100%;
+        block-size: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: var(--md-sys-color-surface);
+        margin: 15% auto;
+        padding: 2rem;
+        border-radius: 8px;
+        max-inline-size: 400px;
+      }
+
+      .close {
+        color: var(--md-sys-color-on-surface-variant);
+        float: inline-end;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .close:hover {
+        color: var(--md-sys-color-on-surface);
+      }
+
+      @media (max-inline-size: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .nav-drawer-toggle {
+          display: block;
+        }
+
+        .nav-drawer {
+          position: fixed;
+          inset-block-start: 0;
+          inset-inline-start: -250px;
+          inline-size: 250px;
+          block-size: 100%;
+          background-color: var(--md-sys-color-surface);
+          transition: left 0.3s ease;
+          z-index: 1000;
+        }
+
+        .nav-drawer.open {
+          inset-inline-start: 0;
+        }
+
+        .nav-drawer-content {
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+        }
+
+        .nav-drawer .nav-link {
+          padding: 0.5rem 0;
+        }
+      }
+
+      @media (min-inline-size: 769px) {
+        .nav-drawer-toggle {
+          display: none;
+        }
+
+        .nav-drawer {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-top-bar">
+        <a href="#" class="app-logo">
+          <span class="google-symbols">material_design</span>
+          <span>MD3 App</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#home" class="nav-link">Home</a>
+          <a href="#work" class="nav-link">Work</a>
+          <a href="#about" class="nav-link">About</a>
+          <a href="#blog" class="nav-link">Blog</a>
+          <a href="#contact" class="nav-link">Contact</a>
+        </nav>
+        <div class="nav-social">
+          <a href="#" class="nav-link">
+            <span class="google-symbols">share</span>
+          </a>
+          <a href="#" class="nav-link">
+            <span class="google-symbols">thumb_up</span>
+          </a>
+        </div>
+        <button class="nav-login" id="loginBtn">Login</button>
+        <button class="nav-drawer-toggle">
+          <span class="google-symbols">menu</span>
+        </button>
+      </header>
+
+      <nav class="nav-drawer">
+        <div class="nav-drawer-content">
+          <a href="#home" class="nav-link">Home</a>
+          <a href="#work" class="nav-link">Work</a>
+          <a href="#about" class="nav-link">About</a>
+          <a href="#blog" class="nav-link">Blog</a>
+          <a href="#contact" class="nav-link">Contact</a>
+        </div>
+      </nav>
+
+      <main>
+        <section id="home" class="home-split-panel">
+          <div class="home-content">
+            <h1>Welcome to MD3 App</h1>
+            <p>
+              Experience the power of Material Design 3 in this modern web
+              application.
+            </p>
+            <div class="cta-buttons">
+              <a href="#work" class="cta-button">Our Work</a>
+              <a href="#contact" class="cta-button">Get in Touch</a>
+            </div>
+          </div>
+          <div class="home-image">
+            <img src="https://picsum.photos/800/600" alt="Home Image" />
+          </div>
+        </section>
+
+        <section id="work">
+          <div
+            class="hero-header"
+            style="
+              background-image: url('https://picsum.photos/1200/600?random=7');
+            "
+          >
+            <h1>Our Work</h1>
+          </div>
+          <article class="article">
+            <h2 class="article-title">Showcasing Our Projects</h2>
+            <h3 class="article-subtitle">
+              Innovative Solutions for Modern Challenges
+            </h3>
+            <div class="article-meta">
+              <span>By John Doe</span>
+              <span>April 15, 2024</span>
+            </div>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+            <p>
+              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.
+            </p>
+            <p>
+              Duis aute irure dolor in reprehenderit in voluptate velit esse
+              cillum dolore eu fugiat nulla pariatur.
+            </p>
+          </article>
+        </section>
+
+        <section id="about">
+          <div
+            class="hero-header"
+            style="
+              background-image: url('https://picsum.photos/1200/600?random=87');
+            "
+          >
+            <h1>About Us</h1>
+          </div>
+          <article class="article">
+            <h2 class="article-title">Our Story</h2>
+            <h3 class="article-subtitle">Passion for Innovation</h3>
+            <div class="article-meta">
+              <span>By Jane Smith</span>
+              <span>April 16, 2024</span>
+            </div>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+            <p>
+              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.
+            </p>
+            <p>
+              Duis aute irure dolor in reprehenderit in voluptate velit esse
+              cillum dolore eu fugiat nulla pariatur.
+            </p>
+          </article>
+        </section>
+
+        <section id="blog">
+          <div
+            class="hero-header"
+            style="
+              background-image: url('https://picsum.photos/1200/600?random=9');
+            "
+          >
+            <h1>Our Blog</h1>
+          </div>
+          <div class="blog-grid">
+            <div class="blog-card">
+              <div
+                class="blog-card-image"
+                style="
+                  background-image: url('https://picsum.photos/400/300?random=2');
+                "
+              ></div>
+              <div class="blog-card-content">
+                <h3 class="blog-card-title">The Future of Web Design</h3>
+                <p class="blog-card-excerpt">
+                  Exploring upcoming trends in web design and user experience.
+                </p>
+              </div>
+            </div>
+            <div class="blog-card">
+              <div
+                class="blog-card-image"
+                style="
+                  background-image: url('https://picsum.photos/400/300?random=3');
+                "
+              ></div>
+              <div class="blog-card-content">
+                <h3 class="blog-card-title">Mastering Material Design 3</h3>
+                <p class="blog-card-excerpt">
+                  Tips and tricks for implementing Material Design 3 in your
+                  projects.
+                </p>
+              </div>
+            </div>
+            <div class="blog-card">
+              <div
+                class="blog-card-image"
+                style="
+                  background-image: url('https://picsum.photos/400/300?random=4');
+                "
+              ></div>
+              <div class="blog-card-content">
+                <h3 class="blog-card-title">The Power of Responsive Design</h3>
+                <p class="blog-card-excerpt">
+                  Creating seamless experiences across all devices and screen
+                  sizes.
+                </p>
+              </div>
+            </div>
+            <div class="blog-card">
+              <div
+                class="blog-card-image"
+                style="
+                  background-image: url('https://picsum.photos/400/300?random=5');
+                "
+              ></div>
+              <div class="blog-card-content">
+                <h3 class="blog-card-title">
+                  Accessibility in Web Development
+                </h3>
+                <p class="blog-card-excerpt">
+                  Ensuring your websites are usable by everyone, regardless of
+                  abilities.
+                </p>
+              </div>
+            </div>
+            <div class="blog-card">
+              <div
+                class="blog-card-image"
+                style="
+                  background-image: url('https://picsum.photos/400/300?random=6');
+                "
+              ></div>
+              <div class="blog-card-content">
+                <h3 class="blog-card-title">
+                  The Rise of Progressive Web Apps
+                </h3>
+                <p class="blog-card-excerpt">
+                  Exploring the benefits and implementation of PWAs in modern
+                  web development.
+                </p>
+              </div>
+            </div>
+            <div class="blog-card">
+              <div
+                class="blog-card-image"
+                style="
+                  background-image: url('https://picsum.photos/400/300?random=1');
+                "
+              ></div>
+              <div class="blog-card-content">
+                <h3 class="blog-card-title">Optimizing Web Performance</h3>
+                <p class="blog-card-excerpt">
+                  Techniques for improving load times and overall website
+                  performance.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact">
+          <div class="contact-container">
+            <div class="contact-form">
+              <h2>Get in Touch</h2>
+              <form>
+                <input type="text" placeholder="Name" required />
+                <input type="email" placeholder="Email" required />
+                <textarea placeholder="Message" rows="5" required></textarea>
+                <button type="submit">Send Message</button>
+              </form>
+            </div>
+            <div class="contact-info">
+              <div
+                class="hero-header"
+                style="
+                  background-image: url('https://picsum.photos/1200/600?random=10');
+                "
+              >
+                <h2>Contact Information</h2>
+                <p>
+                  We'd love to hear from you! Feel free to reach out using the
+                  contact form or through any of the methods below.
+                </p>
+                <p>Email: info@md3app.com</p>
+                <p>Phone: (123) 456-7890</p>
+                <p>Address: 123 Material Design St, Web City, Internet 12345</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-links">
+            <a href="#home">Home</a>
+            <a href="#work">Work</a>
+            <a href="#about">About</a>
+            <a href="#blog">Blog</a>
+            <a href="#contact">Contact</a>
+          </div>
+          <div class="footer-social">
+            <a href="#"
+              ><span class="material-symbols-outlined">facebook</span></a
+            >
+            <a href="#"
+              ><span class="material-symbols-outlined">twitter</span></a
+            >
+            <a href="#"
+              ><span class="material-symbols-outlined">instagram</span></a
+            >
+            <a href="#"
+              ><span class="material-symbols-outlined">linkedin</span></a
+            >
+          </div>
+          <div class="footer-copyright">
+            <p>&copy; 2024 MD3 App. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Login</h2>
+        <form>
+          <input type="email" placeholder="Email" required />
+          <input type="password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Navigation drawer functionality
+      const navDrawerToggle = document.querySelector(".nav-drawer-toggle");
+      const navDrawer = document.querySelector(".nav-drawer");
+
+      navDrawerToggle.addEventListener("click", () => {
+        navDrawer.classList.toggle("open");
+      });
+
+      // Login modal functionality
+      const loginBtn = document.getElementById("loginBtn");
+      const loginModal = document.getElementById("loginModal");
+      const closeBtn = loginModal.querySelector(".close");
+
+      loginBtn.addEventListener("click", () => {
+        loginModal.style.display = "block";
+      });
+
+      closeBtn.addEventListener("click", () => {
+        loginModal.style.display = "none";
+      });
+
+      window.addEventListener("click", (event) => {
+        if (event.target == loginModal) {
+          loginModal.style.display = "none";
+        }
+      });
+
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          const href = this.getAttribute("href");
+
+          // Check if the href is just "#" or an empty string
+          if (href === "#" || href === "") {
+            // Optionally scroll to top for empty links
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+            return;
+          }
+
+          // Try to find the target element
+          const targetElement = document.querySelector(href);
+
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: "smooth",
+            });
+          } else {
+            console.warn(`No element found with id: ${href.substring(1)}`);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

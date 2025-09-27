@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Reparations for slavery and colonialism - a comprehensive analysis."
+    />
+    <title>Reparations Analysis</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --md-sys-color-primary: #92624a;
+        --md-sys-color-on-primary: #ffffff;
+        --md-sys-color-primary-container: #ffdcc5;
+        --md-sys-color-on-primary-container: #331101;
+        --md-sys-color-secondary: #775651;
+        --md-sys-color-on-secondary: #ffffff;
+        --md-sys-color-background: #fffbff;
+        --md-sys-color-on-background: #201a18;
+        --md-sys-color-surface: #fff8f6;
+        --md-sys-color-on-surface: #201a18;
+      }
+
+      :root.dark-theme {
+        --md-sys-color-primary: #bb86fc;
+        --md-sys-color-on-primary: #000000;
+        --md-sys-color-primary-container: #3700b3;
+        --md-sys-color-background: #121212;
+        --md-sys-color-on-background: #ede7f6;
+        --md-sys-color-surface: #1e1e1e;
+        --md-sys-color-on-surface: #ede7f6;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--md-sys-color-background);
+        color: var(--md-sys-color-on-background);
+        line-height: 1.6;
+        transition: background-color 0.5s ease, color 0.5s ease;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .logo {
+        height: 40px;
+        width: auto;
+      }
+
+      #menu-toggle {
+        background: none;
+        border: none;
+        color: var(--md-sys-color-on-primary);
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      header,
+      footer,
+      .card,
+      .side-nav {
+        transition: background-color 0.5s ease, color 0.5s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .button {
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      #dark-mode-toggle {
+        transition: transform 0.3s ease;
+      }
+
+      #dark-mode-toggle:hover {
+        transform: rotate(180deg);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      header {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        align-items: center;
+        padding: 1rem;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      header.hidden {
+        transform: translateY(-100%);
+      }
+
+      header .brand {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 5rem;
+      }
+
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        justify-content: flex-start;
+        gap: 3vw;
+        margin-right: 2dvw;
+      }
+
+      nav ul li a {
+        color: var(--md-sys-color-on-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      nav ul li a:hover {
+        color: var(--md-sys-color-primary-container);
+      }
+
+      .side-nav {
+        position: fixed;
+        top: 80px;
+        left: -250px;
+        width: 250px;
+        height: calc(100dvh - 80px);
+        background-color: var(--md-sys-color-surface-variant);
+        transition: left 0.3s ease-in-out;
+        overflow-y: auto;
+        z-index: 999;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .side-nav.open {
+        left: 0;
+      }
+
+      .side-nav ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .side-nav ul li {
+        padding: 1rem;
+      }
+
+      .side-nav ul li a {
+        color: var(--md-sys-color-on-surface-variant);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .side-nav ul li a:hover {
+        color: var(--md-sys-color-primary);
+      }
+
+      main {
+        margin-top: 80px;
+        padding: 2rem 0;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      section {
+        position: relative;
+      }
+
+      .article {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 32px 16px;
+      }
+
+      .article h1 {
+        font-size: 36px;
+        margin-bottom: 16px;
+      }
+
+      .article h2 {
+        font-size: 24px;
+        margin-bottom: 8px;
+        color: var(--md-sys-color-secondary);
+      }
+
+      .article-meta {
+        font-size: 14px;
+        color: var(--md-sys-color-on-surface-variant);
+        margin-bottom: 16px;
+      }
+
+      .split-panel {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .split-panel-content,
+      .split-panel-image {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .split-panel-image img {
+        width: 100%;
+        height: 100%;
+        border-radius: 16px;
+        object-fit: cover;
+      }
+
+      .split-panel-content {
+        padding: 32px;
+        background-color: var(--md-sys-color-surface);
+      }
+
+      .hero {
+        display: flex;
+        height: calc(100vh - 60px);
+      }
+
+      .hero-header,
+      .section-hero {
+        height: 50vh;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+        margin-bottom: 2rem;
+        position: sticky;
+        top: 0;
+        left: 0;
+      }
+
+      .hero-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .hero-image {
+        flex: 1;
+        background-size: cover;
+        background-position: center;
+        border-radius: 0 0 0 40px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: var(--md-sys-color-on-surface);
+        margin-bottom: 1rem;
+      }
+
+      h1 {
+        font-size: 4rem;
+      }
+      h2 {
+        font-size: 3rem;
+      }
+      h3 {
+        font-size: 2.25rem;
+      }
+      h4 {
+        font-size: 1.75rem;
+      }
+      h5 {
+        font-size: 1.25rem;
+      }
+      h6 {
+        font-size: 1rem;
+      }
+
+      p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .button {
+        background-color: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .button:hover {
+        background-color: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        transform: translateY(-2px);
+      }
+
+      .card {
+        background-color: var(--md-sys-color-surface);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+      }
+
+      footer {
+        background-color: var(--md-sys-color-surface-variant);
+        color: var(--md-sys-color-on-surface-variant);
+        padding: 2rem 0;
+        margin-top: 2rem;
+      }
+
+      .social-icons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .social-icons a {
+        color: var(--md-sys-color-on-surface-variant);
+        font-size: 1.5rem;
+        transition: color 0.3s ease, transform 0.2s ease;
+      }
+
+      .social-icons a:hover {
+        color: var(--md-sys-color-primary);
+        transform: scale(1.1);
+      }
+
+      #menu-toggle {
+        display: flex;
+        background: none;
+        border: none;
+        color: var(--md-sys-color-on-primary);
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        .hero {
+          flex-direction: column;
+        }
+
+        .hero-image {
+          height: 50vh;
+          border-radius: 0 0 40px 40px;
+        }
+        header {
+          padding: 0.5rem;
+        }
+
+        nav ul {
+          display: none;
+        }
+
+        #menu-toggle {
+          display: block;
+        }
+
+        .side-nav {
+          left: -100%;
+          width: 100%;
+        }
+
+        main {
+          margin-top: 60px;
+        }
+
+        h1 {
+          font-size: 3rem;
+        }
+        h2 {
+          font-size: 2.25rem;
+        }
+        h3 {
+          font-size: 1.75rem;
+        }
+        h4 {
+          font-size: 1.5rem;
+        }
+        h5 {
+          font-size: 1.25rem;
+        }
+        h6 {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header id="header" aria-label="Main Header">
+      <div class="brand">
+        <svg class="logo" width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="#FFDCC5" />
+          <path
+            d="M10,20 Q20,10 30,20 T10,20"
+            fill="none"
+            stroke="#92624A"
+            stroke-width="3"
+          />
+          <circle cx="15" cy="15" r="3" fill="#92624A" />
+          <circle cx="25" cy="15" r="3" fill="#92624A" />
+        </svg>
+        <button id="menu-toggle" aria-expanded="false" aria-label="Toggle menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+      <div class="container">
+        <nav>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#analysis">Analysis</a></li>
+            <li><a href="#bibliography">Bibliography</a></li>
+            <li><a href="#references">References</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <nav
+      class="side-nav"
+      id="side-nav"
+      role="navigation"
+      aria-label="Side Navigation"
+    >
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#historical-context">Historical Context</a></li>
+        <li><a href="#arguments-for">Arguments for Reparations</a></li>
+        <li><a href="#arguments-against">Arguments Against Reparations</a></li>
+        <li><a href="#case-studies">Case Studies</a></li>
+        <li><a href="#diverse-perspectives">Diverse Perspectives</a></li>
+        <li><a href="#frameworks">Potential Frameworks</a></li>
+        <li><a href="#bibliography">Bibliography</a></li>
+        <li><a href="#references">References</a></li>
+      </ul>
+    </nav>
+
+    <main>
+      <section id="home" class="hero" tabindex="0">
+        <div class="hero-content">
+          <h1>Reparations Analysis</h1>
+          <p>
+            An in-depth exploration of the arguments, perspectives, and
+            potential frameworks for addressing historical injustices related to
+            slavery and colonialism.
+          </p>
+          <a href="#historical-context" class="button">Explore Analysis</a>
+        </div>
+        <div
+          class="hero-image"
+          style="background-image: url('https://picsum.photos/id/447/1000/800')"
+        ></div>
+      </section>
+
+      <div class="container">
+        <section id="home" tabindex="0">
+          <h1>Reparations for Slavery and Colonialism</h1>
+          <p>
+            An in-depth analysis of the arguments, perspectives, and potential
+            frameworks for addressing historical injustices.
+          </p>
+          <a href="#analysis" class="button">Explore Analysis</a>
+        </section>
+
+        <section id="analysis" tabindex="0">
+          <h2>Comprehensive Analysis</h2>
+          <div class="card" id="historical-context">
+            <h3>Historical Context</h3>
+            <p>
+              The trans-Atlantic slave trade and European colonization of Africa
+              were transformative processes that profoundly shaped the modern
+              world economy and international relations...
+            </p>
+          </div>
+          <div class="card" id="arguments-for">
+            <h3>Arguments for Reparations</h3>
+            <p>
+              Proponents of reparations argue for quantifiable economic losses,
+              intergenerational wealth transfer, ongoing economic impacts, and
+              moral obligations...
+            </p>
+          </div>
+          <div class="card" id="arguments-against">
+            <h3>Arguments Against Reparations</h3>
+            <p>
+              Critics raise concerns about the complexity of historical
+              responsibility, economic feasibility, and alternative approaches
+              to addressing historical injustices...
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <section id="historical-context">
+        <div
+          class="section-hero hero-header"
+          style="background-image: url('https://picsum.photos/1000/800?blur=2')"
+        >
+          <h2>Historical Context</h2>
+        </div>
+        <article class="article">
+          <div class="container">
+            <p>
+              The trans-Atlantic slave trade and European colonization of Africa
+              were transformative processes that profoundly shaped the modern
+              world economy and international relations. Lasting from the 16th
+              to the 19th century, the slave trade forcibly transported an
+              estimated 12-15 million Africans to the Americas, providing labor
+              for plantations and fueling European economic growth.
+            </p>
+            <p>
+              Eric Williams' "Capitalism and Slavery" (1944) argued that profits
+              from slavery were crucial to financing the Industrial Revolution.
+              While some historians have debated the extent of this claim,
+              there's broad consensus that slavery played a significant role in
+              European and American economic development.
+            </p>
+            <p>
+              Colonialism, formalized at the Berlin Conference of 1884-1885,
+              lasted until the mid-20th century for most African countries. It
+              primarily followed an extractive economic model, focused on raw
+              materials and cash crops. Walter Rodney's "How Europe
+              Underdeveloped Africa" (1972) detailed how colonialism disrupted
+              African economies and societies by redirecting economic activities
+              to serve European interests, undermining traditional governance
+              structures, and creating artificial borders that ignored ethnic
+              and cultural realities.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section id="arguments-for">
+        <div
+          class="section-hero"
+          style="background-image: url('https://picsum.photos/1000/700?blur=2')"
+        >
+          <h2>Arguments for Reparations</h2>
+        </div>
+        <article class="article">
+          <div class="container">
+            <h3>Quantifiable Economic Losses</h3>
+            <p>
+              Economists and historians have attempted to calculate the monetary
+              value of reparations. The United Nations Conference on Trade and
+              Development (UNCTAD) estimated in a 2020 report that the drain of
+              resources from Africa during the colonial period amounted to $22
+              trillion in today's value. This calculation considered direct
+              resource extraction, lost development opportunities, and
+              ecological damage.
+            </p>
+            <p>
+              Historian Richard Drayton argues that Britain extracted over £100
+              million from Africa between 1885 and 1914 alone, a period when the
+              entire British government expenditure was around £200 million
+              annually.
+            </p>
+
+            <h3>Intergenerational Wealth Transfer and Persistent Inequality</h3>
+            <p>
+              Scholars like Thomas Craemer have argued that the wealth generated
+              by slavery has compounded over generations, contributing to racial
+              wealth gaps in countries like the United States. His 2015 study
+              "Estimating Slavery Reparations" attempted to calculate the
+              present value of U.S. slave labor, with estimates ranging from
+              $5.9 trillion to $14.2 trillion.
+            </p>
+
+            <h3>Ongoing Economic Impacts</h3>
+            <p>
+              Economists like Daron Acemoglu and James Robinson, in "Why Nations
+              Fail" (2012), argue that colonial institutions created extractive
+              economic structures that persist in many African countries,
+              hindering development. These include property rights systems, tax
+              structures, and political institutions that favor elites.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section id="arguments-against">
+        <div
+          class="section-hero"
+          style="background-image: url('https://picsum.photos/1000/500?blur=2')"
+        >
+          <h2>Arguments Against Reparations</h2>
+        </div>
+        <article class="article">
+          <div class="container">
+            <h3>Complexity of Historical Responsibility</h3>
+            <p>
+              Historians like Henry Louis Gates Jr. have highlighted the role of
+              African elites in the slave trade, complicating narratives of
+              responsibility. This raises questions about who should pay and who
+              should receive reparations, given the passage of time and mixed
+              ancestries.
+            </p>
+
+            <h3>Economic Feasibility</h3>
+            <p>
+              Critics argue that the scale of reparations required would be
+              economically unfeasible for many nations. The potential costs,
+              estimated in the trillions of dollars, could have significant
+              impacts on global markets and donor country economies.
+            </p>
+
+            <h3>Alternative Approaches</h3>
+            <p>
+              Some scholars, like economist William Easterly, argue that
+              improving institutions and governance in African countries is more
+              crucial than direct financial transfers. Others propose targeted
+              development aid or debt relief as more practical alternatives to
+              address current economic challenges in Africa.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- Add more sections for Case Studies, Diverse Perspectives, and Potential Frameworks -->
+
+      <section id="bibliography">
+        <div
+          class="section-hero"
+          style="background-image: url('https://picsum.photos/id/124/1000/650')"
+        >
+          <h2>Bibliography</h2>
+        </div>
+        <article class="article">
+          <div class="container">
+            <ul>
+              <li>
+                Acemoglu, D., & Robinson, J. A. (2012). Why Nations Fail: The
+                Origins of Power, Prosperity, and Poverty. Crown Business.
+              </li>
+              <li>
+                Burkett, M. (2009). Climate Reparations. Melbourne Journal of
+                International Law, 10(2), 509-542.
+              </li>
+              <li>
+                Craemer, T. (2015). Estimating Slavery Reparations: Present
+                Value Comparisons of Historical Multigenerational Reparations
+                Policies. Social Science Quarterly, 96(2), 639-655.
+              </li>
+              <!-- Add more bibliography entries -->
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section id="references">
+        <div
+          class="section-hero"
+          style="
+            background-image: url('https://picsum.photos/id/215/1000/600?grayscale&blur=2');
+          "
+        >
+          <h2>References</h2>
+        </div>
+        <div class="container">
+          <ul>
+            <li>
+              Acemoglu, D., & Robinson, J. A. (2012). Why Nations Fail: The
+              Origins of Power, Prosperity, and Poverty. Crown Business.
+            </li>
+            <li>
+              Burkett, M. (2009). Climate Reparations. Melbourne Journal of
+              International Law, 10(2), 509-542.
+            </li>
+            <li>
+              Craemer, T. (2015). Estimating Slavery Reparations: Present Value
+              Comparisons of Historical Multigenerational Reparations Policies.
+              Social Science Quarterly, 96(2), 639-655.
+            </li>
+            <!-- Add more bibliography entries -->
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="social-icons" aria-label="Social Media Links">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <p>&copy; 2024 Reparations Analysis. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      let lastScrollTop = 0;
+      const header = document.getElementById("header");
+      const menuToggle = document.getElementById("menu-toggle");
+      const sideNav = document.getElementById("side-nav");
+
+      window.addEventListener("scroll", () => {
+        let scrollTop =
+          window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > lastScrollTop) {
+          header.classList.add("hidden");
+        } else {
+          header.classList.remove("hidden");
+        }
+        lastScrollTop = scrollTop;
+      });
+
+      menuToggle.addEventListener("click", () => {
+        sideNav.classList.toggle("open");
+      });
+
+      // Close side nav when clicking outside
+      document.addEventListener("click", (event) => {
+        if (
+          !sideNav.contains(event.target) &&
+          !menuToggle.contains(event.target)
+        ) {
+          sideNav.classList.remove("open");
+        }
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+          sideNav.classList.remove("open");
+        });
+      });
+
+      const darkModeToggle = document.getElementById("dark-mode-toggle");
+      const body = document.body;
+
+      // Check for saved user preference in localStorage
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        body.classList.add(savedTheme);
+      }
+
+      // Toggle dark mode and save preference to localStorage
+      darkModeToggle.addEventListener("click", () => {
+        if (body.classList.contains("dark-theme")) {
+          body.classList.remove("dark-theme");
+          localStorage.setItem("theme", "");
+        } else {
+          body.classList.add("dark-theme");
+          localStorage.setItem("theme", "dark-theme");
+        }
+      });
+
+      // Optionally update the icon based on the current theme
+      function updateDarkModeIcon() {
+        const isDarkMode = body.classList.contains("dark-theme");
+        darkModeToggle.innerHTML = isDarkMode
+          ? '<i class="fas fa-sun"></i>'
+          : '<i class="fas fa-moon"></i>';
+      }
+
+      // Initial icon setup
+      updateDarkModeIcon();
+
+      // Change icon when toggling theme
+      darkModeToggle.addEventListener("click", updateDarkModeIcon);
+    </script>
+  </body>
+</html>
