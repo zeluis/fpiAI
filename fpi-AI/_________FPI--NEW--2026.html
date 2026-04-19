@@ -1,0 +1,77 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- ✅ Critical CSS Approach (Optimized) -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FPI NEW 2026--UNIFIED</title>
+
+<!--   MANIFEST   -->
+<link rel="manifest" href="favicons/manifest.json" />
+<link rel="yandex-tableau-widget" href="favicons/yandex-browser-manifest.json" />
+
+<!--   FAVICON   -->
+<link rel="icon" type="image/x-ico" sizes="32x32" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon-180x180.png" />
+<link rel="icon" type="image/svg+xml" href="fpi--logo.svg" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/svg+xml" href="fpi--logo-outline.svg" media="(prefers-color-scheme: dark)">
+
+<!-- MOBILE WEB-APP SETUP -->
+<!-- APPLE -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="fpids.ch" />
+<!-- ANDROID -->
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#ed010c" />
+<meta name="application-name" content="fpids.ch" />
+<!-- WINDOWS-PHONE - OTHERS -->
+<meta name="msapplication-TileColor" content="#ffffff" />
+<meta name="msapplication-TileImage" content="/favicons/mstile-144x144.png" />
+<meta name="theme-color" content="#ed010c" />
+
+<!-- ===========  FPI | CACHE CONTROL |  ========= -->
+<meta http-equiv="cache-control" content="no-cache, must-revalidate">
+
+<!-- ===========  FPI | RESOURCES PRELOAD |  ========= -->
+<!-- ===========  FPI | IMGS PLACEHOLDERS |  ========= -->
+<!-- Preload LCP hero image placeholder (SVG inline avoids network req) -->
+<link rel="preload" href="https://picsum.photos/1900/1080.webp?random=7" as="image">
+
+<!-- ===========  FPI | FONT PRELOAD |  ========= -->
+<!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> -->
+<link rel="prefetch" href="static/fonts/variable/variable_bold-webfont.woff2?#iVARefix" as="font" type="font/woff2" crossorigin="anonymous" />
+
+<!--   ===========  FPI | THEME COLOR |  =========  -->
+<meta name="theme-color" content="#ed010c" id="themeMetaColor">
+<meta name="color-scheme" content="light dark">
+  <!-- Inline critical CSS for above-the-fold content -->
+  <style fpi-custom="">
+    /* Critical styles for header, hero, initial viewport */
+    header {
+      background: #1a1a1a;
+      padding: 1rem;
+    }
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+    /* Only essential styles for first paint */
+  </style>
+
+  <!-- Load full CSS asynchronously
+  <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css"></noscript> -->
+</head>
+<body>
+  <header>...</header>
+  <main class="hero">...</main>
+</body>
+</html>

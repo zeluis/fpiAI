@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A high-performance web app optimized for Core Web Vitals">
+  <title>Apex Studio</title>
+
+  <!-- Preconnect & DNS prefetch -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+
+  <!-- Preload LCP hero image placeholder (SVG inline avoids network req) -->
+  <meta name="theme-color" content="#0a0a0f" id="themeMetaColor">
+
+  <style>
+    /* ============================================================
+       CRITICAL CSS — inlined to prevent render-blocking
+       ============================================================ */
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #13131a;
+      --bg3: #1c1c28;
+      --accent: #6c63ff;
+      --accent2: #ff6584;
+      --text: #e8e8f0;
+      --muted: #8888aa;
+      --card: #16161f;
+      --border: rgba(108,99,255,.18);
+      --radius: 14px;
+      --nav-h: 64px;
+      --font: system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      --transition: .22s cubic-bezier(.4,0,.2,1);
+      --shadow: 0 2px 16px rgba(0,0,0,.35);
+    }
+    :root.light {
+      --bg: #f5f5fa;
+      --bg2: #eaeaf3;
+      --bg3: #dddde8;
+      --text: #0f0f1a;
+      --muted: #5a5a7a;
+      --card: #ffffff;
+      --border: rgba(108,99,255,.18);
+      --shadow: 0 2px 16px rgba(108,99,255,.1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{
+      font-family:var(--font);
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.6;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    /* Nav — fixed, prevents CLS by reserving height */
+    nav{
+      position:fixed;top:0;left:0;right:0;
+      height:var(--nav-h);
+      background:rgba(10,10,15,.85);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 clamp(1rem,4vw,2.5rem);
+      z-index:1000;
+      will-change:transform;
+      transition:background var(--transition),border-color var(--transition);
+    }
+    :root.light nav{background:rgba(245,245,250,.88)}
+    .logo{
+      font-size:1.35rem;font-weight:700;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+      text-decoration:none;
+      flex-shrink:0;
+    }
+    .nav-links{display:flex;gap:2rem;list-style:none}
+    .nav-links a{
+      color:var(--muted);text-decoration:none;font-size:.93rem;font-weight:500;
+      transition:color var(--transition);position:relative;
+    }
+    .nav-links a::after{
+      content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;
+      background:var(--accent);border-radius:2px;
+      transform:scaleX(0);transform-origin:left;
+      transition:transform var(--transition);
+    }
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    .nav-links a:hover::after,.nav-links a.active::after{transform:scaleX(1)}
+    /* Theme toggle — hidden on mobile (shown in slide nav instead) */
+    .theme-toggle{
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:99px;padding:0;cursor:pointer;
+      width:52px;height:28px;position:relative;flex-shrink:0;
+      transition:background var(--transition),border-color var(--transition);
+      -webkit-tap-highlight-color:transparent;
+    }
+    @media(max-width:768px){
+      .theme-toggle.nav-toggle{display:none}
+    }
+    .theme-toggle::before{
+      content:'';position:absolute;top:3px;left:3px;
+      width:22px;height:22px;border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),#9d56f7);
+      transition:transform var(--transition),box-shadow var(--transition);
+      box-shadow:0 1px 6px rgba(108,99,255,.5);
+    }
+    :root.light .theme-toggle::before{transform:translateX(24px)}
+    .theme-toggle .t-icon{
+      position:absolute;top:50%;transform:translateY(-50%);
+      font-size:.75rem;line-height:1;pointer-events:none;
+      transition:opacity var(--transition);
+    }
+    .t-moon{left:7px;opacity:1}
+    .t-sun{right:6px;opacity:0}
+    :root.light .t-moon{opacity:0}
+    :root.light .t-sun{opacity:1}
+    /* body & card transitions for smooth theme switch */
+    body,nav,.card,input,textarea,select,.mobile-nav,.cwv-badge{
+      transition:background var(--transition),color var(--transition),border-color var(--transition),box-shadow var(--transition);
+    }
+    /* Hamburger */
+    .hamburger{
+      display:none;flex-direction:column;gap:5px;cursor:pointer;
+      background:none;border:none;padding:6px;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .hamburger span{
+      display:block;width:24px;height:2px;
+      background:var(--text);border-radius:2px;
+      transition:transform var(--transition),opacity var(--transition);
+    }
+    /* Mobile nav */
+    .mobile-nav{
+      position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;
+      background:rgba(10,10,15,.75);
+      backdrop-filter:blur(24px);
+      -webkit-backdrop-filter:blur(24px);
+      border-top:1px solid var(--border);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:2.5rem;
+      transform:translateX(100%);
+      transition:transform .32s cubic-bezier(.4,0,.2,1);
+      z-index:999;
+      padding-bottom:3rem;
+    }
+    :root.light .mobile-nav{background:rgba(245,245,250,.78)}
+    .mobile-nav.open{transform:translateX(0)}
+    .mobile-nav a{
+      font-size:1.8rem;font-weight:600;color:var(--muted);
+      text-decoration:none;transition:color var(--transition),transform var(--transition);
+    }
+    .mobile-nav a:hover,.mobile-nav a.active{color:var(--text);transform:translateX(8px)}
+    .mobile-nav-footer{
+      position:absolute;bottom:2.5rem;left:0;right:0;
+      display:flex;flex-direction:column;align-items:center;gap:.75rem;
+    }
+    .mobile-nav-footer span{font-size:.78rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+    /* Timeline stacks on mobile */
+    @media(max-width:768px){
+      .process-grid{grid-template-columns:1fr !important}
+    }
+    /* Page system */
+    .page{display:none;min-height:100vh;padding-top:var(--nav-h)}
+    .page.active{display:block}
+    /* Hero — aspect-ratio prevents CLS */
+    .hero{
+      min-height:min(90vh,680px);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:4rem clamp(1rem,5vw,3rem);
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 80% 60% at 50% 30%,rgba(108,99,255,.22) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .hero-eyebrow{
+      font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:1rem;
+      background:rgba(108,99,255,.1);
+      padding:.35rem 1rem;border-radius:99px;border:1px solid var(--border);
+      display:inline-block;
+    }
+    .hero h1{
+      font-size:clamp(2.2rem,6vw,4.2rem);font-weight:800;line-height:1.12;
+      max-width:16ch;margin-bottom:1.2rem;
+      background:linear-gradient(160deg,#fff 0%,var(--muted) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .hero p{
+      font-size:clamp(.95rem,2.2vw,1.15rem);color:var(--muted);
+      max-width:52ch;margin:0 auto 2rem;
+    }
+    /* Buttons */
+    .btn{
+      display:inline-flex;align-items:center;gap:.5rem;
+      padding:.8rem 1.8rem;border-radius:99px;font-weight:600;
+      font-size:.95rem;text-decoration:none;cursor:pointer;
+      transition:transform var(--transition),box-shadow var(--transition),background var(--transition);
+      border:none;font-family:inherit;
+      /* Explicit size prevents CLS */
+      min-width:140px;justify-content:center;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),#9d56f7);
+      color:#fff;
+      box-shadow:0 4px 24px rgba(108,99,255,.35);
+    }
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,99,255,.5)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-outline{
+      background:transparent;color:var(--text);
+      border:1px solid var(--border);
+    }
+    .btn-outline:hover{background:var(--bg3);transform:translateY(-2px)}
+    /* Sections */
+    section{padding:clamp(3rem,8vw,6rem) clamp(1rem,5vw,3rem)}
+    .container{max-width:1100px;margin:0 auto}
+    .section-label{
+      font-size:.75rem;font-weight:700;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--accent);margin-bottom:.75rem;
+    }
+    .section-title{
+      font-size:clamp(1.5rem,3.5vw,2.4rem);font-weight:700;
+      line-height:1.2;margin-bottom:1rem;
+    }
+    .section-desc{color:var(--muted);max-width:58ch;margin-bottom:3rem;font-size:1.02rem}
+    /* Cards */
+    .card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:var(--radius);padding:2rem;
+      transition:transform var(--transition),border-color var(--transition),box-shadow var(--transition);
+      position:relative;overflow:hidden;
+    }
+    .card::before{
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(108,99,255,.06),transparent);
+      opacity:0;transition:opacity var(--transition);
+    }
+    .card:hover{transform:translateY(-4px);border-color:rgba(108,99,255,.4);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+    .card:hover::before{opacity:1}
+    /* Grid helpers */
+    .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:1.5rem}
+    .grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:1.5rem}
+    /* Reveal animation */
+    .reveal{
+      opacity:0;transform:translateY(30px);
+      transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1);
+    }
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal-delay-1{transition-delay:.1s}
+    .reveal-delay-2{transition-delay:.2s}
+    .reveal-delay-3{transition-delay:.3s}
+    /* Gallery image placeholder (reserves space = no CLS) */
+    .proj-img{
+      width:100%;aspect-ratio:16/9;
+      border-radius:10px;margin-bottom:1.2rem;
+      overflow:hidden;position:relative;
+      background:var(--bg3);
+    }
+    .proj-img svg{width:100%;height:100%;object-fit:cover}
+    .proj-tag{
+      font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--accent);background:rgba(108,99,255,.12);
+      padding:.25rem .7rem;border-radius:99px;display:inline-block;margin-bottom:.75rem;
+    }
+    .proj-title{font-size:1.1rem;font-weight:700;margin-bottom:.5rem}
+    .proj-desc{color:var(--muted);font-size:.9rem;line-height:1.55}
+    /* Stats */
+    .stat-num{font-size:2.5rem;font-weight:800;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .stat-label{color:var(--muted);font-size:.9rem;margin-top:.25rem}
+    /* Icon box */
+    .icon-box{
+      width:48px;height:48px;border-radius:12px;
+      background:rgba(108,99,255,.15);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.4rem;margin-bottom:1rem;flex-shrink:0;
+      transition:background var(--transition),transform var(--transition);
+    }
+    .card:hover .icon-box{background:rgba(108,99,255,.28);transform:scale(1.1)}
+    /* Contact form */
+    .form-group{margin-bottom:1.25rem}
+    label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.4rem;color:var(--muted)}
+    input,textarea,select{
+      width:100%;padding:.8rem 1rem;
+      background:var(--bg3);border:1px solid var(--border);
+      color:var(--text);border-radius:10px;font-family:inherit;font-size:.95rem;
+      transition:border-color var(--transition),box-shadow var(--transition);
+      outline:none;
+    }
+    input:focus,textarea:focus,select:focus{
+      border-color:var(--accent);box-shadow:0 0 0 3px rgba(108,99,255,.15)
+    }
+    textarea{resize:vertical;min-height:130px}
+    /* Divider */
+    .divider{height:1px;background:var(--border);margin:0}
+    /* Footer */
+    footer{
+      background:var(--bg2);border-top:1px solid var(--border);
+      padding:3rem clamp(1rem,5vw,3rem);text-align:center;
+      color:var(--muted);font-size:.88rem;
+    }
+    /* Scroll indicator */
+    .scroll-bar{
+      position:fixed;top:var(--nav-h);left:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      width:0%;z-index:1001;transition:width .1s linear;
+    }
+    /* About avatar */
+    .avatar-wrap{
+      width:180px;height:180px;border-radius:50%;overflow:hidden;
+      border:3px solid var(--accent);flex-shrink:0;
+      background:var(--bg3);
+    }
+    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem}
+    .team-card{text-align:center}
+    .team-av{
+      width:90px;height:90px;border-radius:50%;margin:0 auto 1rem;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:2rem;font-weight:700;color:#fff;
+      transition:transform var(--transition),box-shadow var(--transition);
+    }
+    .team-card:hover .team-av{transform:scale(1.08);box-shadow:0 8px 32px rgba(108,99,255,.4)}
+    /* Services */
+    .service-card{display:flex;flex-direction:column;gap:.75rem}
+    .price-badge{
+      display:inline-block;font-size:1.5rem;font-weight:800;
+      color:var(--text);margin:.5rem 0;
+    }
+    .price-badge span{font-size:.9rem;font-weight:400;color:var(--muted)}
+    .feature-list{list-style:none;display:flex;flex-direction:column;gap:.5rem;margin:.75rem 0}
+    .feature-list li{display:flex;align-items:center;gap:.5rem;font-size:.92rem;color:var(--muted)}
+    .feature-list li::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
+    /* Testimonial */
+    .testimonial{font-style:italic;color:var(--muted);margin-bottom:1rem;line-height:1.7}
+    .testimonial-author{font-weight:600;color:var(--text);font-style:normal}
+    /* Process timeline */
+    .timeline{display:flex;flex-direction:column;gap:0}
+    .timeline-item{display:flex;gap:1.5rem;padding-bottom:2.5rem;position:relative}
+    .timeline-item:not(:last-child)::after{
+      content:'';position:absolute;left:19px;top:40px;bottom:0;
+      width:2px;background:var(--border);
+    }
+    .tl-num{
+      width:40px;height:40px;border-radius:50%;flex-shrink:0;
+      background:rgba(108,99,255,.15);border:2px solid var(--accent);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:.85rem;color:var(--accent);z-index:1;
+    }
+    /* CWV badge strip */
+    .cwv-strip{
+      display:flex;gap:1rem;flex-wrap:wrap;
+      margin:2rem 0;
+    }
+    .cwv-badge{
+      flex:1;min-width:120px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:12px;padding:1.2rem 1rem;text-align:center;
+    }
+    .cwv-score{font-size:2rem;font-weight:800;color:#0cce6b}
+    .cwv-name{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+    /* Hamburger open state */
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    /* Responsive */
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .hamburger{display:flex}
+      .hero{min-height:min(80vh,560px)}
+      .grid-3{grid-template-columns:1fr}
+    }
+    @media(max-width:480px){
+      .cwv-strip{flex-direction:column}
+      .timeline-item{gap:1rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div class="scroll-bar" id="scrollBar" aria-hidden="true"></div>
+
+<!-- ===================== NAV ===================== -->
+<nav role="navigation" aria-label="Main navigation">
+  <a href="#home" class="logo" data-page="home">Apex Studio</a>
+  <ul class="nav-links" role="list">
+    <li><a href="#home" data-page="home">Home</a></li>
+    <li><a href="#gallery" data-page="gallery">Gallery</a></li>
+    <li><a href="#services" data-page="services">Services</a></li>
+    <li><a href="#about" data-page="about">About</a></li>
+    <li><a href="#contact" data-page="contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle nav-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+    <span class="t-icon t-moon">🌙</span>
+    <span class="t-icon t-sun">☀️</span>
+  </button>
+</nav>
+
+<!-- Mobile nav -->
+<nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+  <a href="#" onclick="navigate('home');closeMobile();return false" data-page="home-m">Home</a>
+  <a href="#" onclick="navigate('gallery');closeMobile();return false" data-page="gallery-m">Gallery</a>
+  <a href="#" onclick="navigate('services');closeMobile();return false" data-page="services-m">Services</a>
+  <a href="#" onclick="navigate('about');closeMobile();return false" data-page="about-m">About</a>
+  <a href="#" onclick="navigate('contact');closeMobile();return false" data-page="contact-m">Contact</a>
+  <div class="mobile-nav-footer">
+    <span>Appearance</span>
+    <button class="theme-toggle" id="themeToggleMobile" aria-label="Toggle light/dark mode">
+      <span class="t-icon t-moon">🌙</span>
+      <span class="t-icon t-sun">☀️</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HOME PAGE ===================== -->
+<main class="page active" id="page-home" role="main">
+  <!-- Hero -->
+  <section class="hero">
+    <span class="hero-eyebrow">Design · Build · Scale</span>
+    <h1>We Craft Digital Experiences That Perform</h1>
+    <p>Apex Studio blends pixel-perfect design with blazing performance—delivering products that delight users and dominate search rankings.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
+      <button class="btn btn-primary" onclick="navigate('gallery')">View Our Work</button>
+      <button class="btn btn-outline" onclick="navigate('contact')">Get In Touch</button>
+    </div>
+  </section>
+
+  <!-- CWV Scores Strip -->
+  <section style="padding:2rem clamp(1rem,5vw,3rem) 0">
+    <div class="container">
+      <div class="cwv-strip reveal">
+        <div class="cwv-badge"><div class="cwv-score">100</div><div class="cwv-name">Performance</div></div>
+        <div class="cwv-badge"><div class="cwv-score">100</div><div class="cwv-name">Accessibility</div></div>
+        <div class="cwv-badge"><div class="cwv-score">100</div><div class="cwv-name">Best Practices</div></div>
+        <div class="cwv-badge"><div class="cwv-score">100</div><div class="cwv-name">SEO</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider" style="margin-top:2rem"></div>
+
+  <!-- Services teaser -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">What We Do</p>
+      <h2 class="section-title reveal reveal-delay-1">End-to-End Digital Solutions</h2>
+      <p class="section-desc reveal reveal-delay-2">From strategy to deployment, we handle every facet of your digital presence with uncompromising quality.</p>
+      <div class="grid-3">
+        <div class="card reveal reveal-delay-1">
+          <div class="icon-box">🎨</div>
+          <h3 style="margin-bottom:.5rem">UI/UX Design</h3>
+          <p style="color:var(--muted);font-size:.93rem">Research-driven interfaces that convert visitors into loyal customers through intuitive, beautiful experiences.</p>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <div class="icon-box">⚡</div>
+          <h3 style="margin-bottom:.5rem">Performance Engineering</h3>
+          <p style="color:var(--muted);font-size:.93rem">Core Web Vitals optimization, edge delivery, and sub-100ms interactions that keep bounce rates low.</p>
+        </div>
+        <div class="card reveal reveal-delay-3">
+          <div class="icon-box">📱</div>
+          <h3 style="margin-bottom:.5rem">Mobile-First Dev</h3>
+          <p style="color:var(--muted);font-size:.93rem">Responsive, PWA-ready applications engineered from the smallest screen outward for maximum reach.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Stats -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">By The Numbers</p>
+      <h2 class="section-title reveal reveal-delay-1">Results That Speak Louder</h2>
+      <p class="section-desc reveal reveal-delay-2">Every project is a commitment to measurable impact—for your users and your business.</p>
+      <div class="grid-4">
+        <div class="card reveal">
+          <div class="stat-num">150+</div>
+          <div class="stat-label">Projects Delivered</div>
+        </div>
+        <div class="card reveal reveal-delay-1">
+          <div class="stat-num">98%</div>
+          <div class="stat-label">Client Satisfaction</div>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <div class="stat-num">4×</div>
+          <div class="stat-label">Avg. LCP Improvement</div>
+        </div>
+        <div class="card reveal reveal-delay-3">
+          <div class="stat-num">12yr</div>
+          <div class="stat-label">Industry Experience</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Process -->
+  <section>
+          <div class="container process-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start">
+      <div>
+        <p class="section-label reveal">Our Process</p>
+        <h2 class="section-title reveal reveal-delay-1">How We Build Excellence</h2>
+        <p class="section-desc reveal reveal-delay-2" style="margin-bottom:0">A battle-tested four-step process that transforms your vision into a high-performing digital product.</p>
+      </div>
+      <div class="timeline reveal reveal-delay-2">
+        <div class="timeline-item">
+          <div class="tl-num">01</div>
+          <div>
+            <h3 style="margin-bottom:.35rem">Discovery</h3>
+            <p style="color:var(--muted);font-size:.9rem">Deep-dive into your goals, audience, and competitive landscape to define a winning strategy.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-num">02</div>
+          <div>
+            <h3 style="margin-bottom:.35rem">Design</h3>
+            <p style="color:var(--muted);font-size:.9rem">Wireframes, component libraries, and pixel-perfect prototypes built on real user data.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="tl-num">03</div>
+          <div>
+            <h3 style="margin-bottom:.35rem">Build</h3>
+            <p style="color:var(--muted);font-size:.9rem">Clean, accessible code with automated performance budgets and CI/CD pipelines.</p>
+          </div>
+        </div>
+        <div class="timeline-item" style="padding-bottom:0">
+          <div class="tl-num">04</div>
+          <div>
+            <h3 style="margin-bottom:.35rem">Launch & Optimize</h3>
+            <p style="color:var(--muted);font-size:.9rem">Edge deployment, CWV monitoring, and iterative improvements post-launch.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Apex Studio · Built for speed, designed to last.</p>
+  </footer>
+</main>
+
+<!-- ===================== GALLERY PAGE ===================== -->
+<main class="page" id="page-gallery" role="main">
+  <section class="hero" style="min-height:min(60vh,420px)">
+    <span class="hero-eyebrow">Our Portfolio</span>
+    <h1>Projects That Define the Craft</h1>
+    <p>Twelve hand-picked projects spanning brand identity, web apps, and performance engineering—each a story of problem-solving at scale.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Projects Grid -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">All Work</p>
+      <h2 class="section-title reveal reveal-delay-1">Selected Case Studies</h2>
+      <p class="section-desc reveal reveal-delay-2">Hover any project to explore. Click to learn more about the challenge and our solution.</p>
+      <div class="grid-3" id="projectsGrid">
+        <!-- Generated by JS below -->
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Clients -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">Trusted By</p>
+      <h2 class="section-title reveal reveal-delay-1">Brands We've Elevated</h2>
+      <p class="section-desc reveal reveal-delay-2">From nimble startups to Fortune 500 enterprises, we've partnered with industry-defining teams worldwide.</p>
+      <div class="grid-4">
+        <div class="card reveal" style="text-align:center;padding:1.5rem"><span style="font-size:1.1rem;font-weight:700">NovaTech</span></div>
+        <div class="card reveal reveal-delay-1" style="text-align:center;padding:1.5rem"><span style="font-size:1.1rem;font-weight:700">Solaris Labs</span></div>
+        <div class="card reveal reveal-delay-2" style="text-align:center;padding:1.5rem"><span style="font-size:1.1rem;font-weight:700">Meridian Co.</span></div>
+        <div class="card reveal reveal-delay-3" style="text-align:center;padding:1.5rem"><span style="font-size:1.1rem;font-weight:700">Orbit SaaS</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CTA -->
+  <section style="text-align:center">
+    <div class="container">
+      <p class="section-label reveal">Next Step</p>
+      <h2 class="section-title reveal reveal-delay-1" style="max-width:14ch;margin:0 auto 1rem">Ready to Be Our Next Case Study?</h2>
+      <p class="section-desc reveal reveal-delay-2" style="margin:0 auto 2rem">Let's talk about your project goals and how we can exceed them together.</p>
+      <button class="btn btn-primary reveal reveal-delay-3" onclick="navigate('contact')">Start a Conversation</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Apex Studio · Built for speed, designed to last.</p>
+  </footer>
+</main>
+
+<!-- ===================== SERVICES PAGE ===================== -->
+<main class="page" id="page-services" role="main">
+  <section class="hero" style="min-height:min(60vh,420px)">
+    <span class="hero-eyebrow">Our Capabilities</span>
+    <h1>Services Engineered for Growth</h1>
+    <p>Every service we offer is grounded in measurable outcomes—faster sites, higher conversions, and products users genuinely love.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Pricing -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">Packages</p>
+      <h2 class="section-title reveal reveal-delay-1">Transparent, Value-First Pricing</h2>
+      <p class="section-desc reveal reveal-delay-2">No hidden fees, no vague retainers. Choose a plan that matches your ambition.</p>
+      <div class="grid-3">
+        <div class="card reveal">
+          <span class="proj-tag">Starter</span>
+          <h3 class="proj-title">Launch Pad</h3>
+          <div class="price-badge">$2,500 <span>/ project</span></div>
+          <ul class="feature-list">
+            <li>Up to 5-page website</li>
+            <li>Mobile-first responsive</li>
+            <li>Core Web Vitals audit</li>
+            <li>Basic SEO setup</li>
+            <li>30-day support</li>
+          </ul>
+          <button class="btn btn-outline" onclick="navigate('contact')" style="width:100%;margin-top:auto">Get Started</button>
+        </div>
+        <div class="card reveal reveal-delay-1" style="border-color:rgba(108,99,255,.5);box-shadow:0 0 40px rgba(108,99,255,.15)">
+          <span class="proj-tag">Popular</span>
+          <h3 class="proj-title">Growth Engine</h3>
+          <div class="price-badge">$7,500 <span>/ project</span></div>
+          <ul class="feature-list">
+            <li>Up to 20-page site or app</li>
+            <li>Custom CMS integration</li>
+            <li>Performance budget & CI</li>
+            <li>Full SEO & accessibility</li>
+            <li>PWA / offline support</li>
+            <li>90-day support</li>
+          </ul>
+          <button class="btn btn-primary" onclick="navigate('contact')" style="width:100%;margin-top:auto">Get Started</button>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <span class="proj-tag">Enterprise</span>
+          <h3 class="proj-title">Full Orbit</h3>
+          <div class="price-badge">Custom</div>
+          <ul class="feature-list">
+            <li>Unlimited scope</li>
+            <li>Dedicated team</li>
+            <li>Architecture consulting</li>
+            <li>Edge CDN & DevOps</li>
+            <li>CWV monitoring suite</li>
+            <li>12-month SLA</li>
+          </ul>
+          <button class="btn btn-outline" onclick="navigate('contact')" style="width:100%;margin-top:auto">Let's Talk</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Specializations -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">Specializations</p>
+      <h2 class="section-title reveal reveal-delay-1">Our Technical Expertise</h2>
+      <p class="section-desc reveal reveal-delay-2">A deep, focused skill set across the modern web stack—so we can solve your hardest problems.</p>
+      <div class="grid-3">
+        <div class="card reveal">
+          <div class="icon-box">🚀</div>
+          <h3 style="margin-bottom:.5rem">LCP Optimization</h3>
+          <p style="color:var(--muted);font-size:.92rem">Preloading, WebP conversion, responsive images, and critical CSS inlining to hit sub-2.5s load times every time.</p>
+        </div>
+        <div class="card reveal reveal-delay-1">
+          <div class="icon-box">👆</div>
+          <h3 style="margin-bottom:.5rem">INP Tuning</h3>
+          <p style="color:var(--muted);font-size:.92rem">Event delegation, main-thread yielding, and long-task breaking so every interaction responds in under 200ms.</p>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <div class="icon-box">📐</div>
+          <h3 style="margin-bottom:.5rem">CLS Prevention</h3>
+          <p style="color:var(--muted);font-size:.92rem">Explicit image dimensions, font-display swap, and skeleton screens ensure zero unexpected layout shifts.</p>
+        </div>
+        <div class="card reveal reveal-delay-1">
+          <div class="icon-box">🌐</div>
+          <h3 style="margin-bottom:.5rem">PWA & Offline</h3>
+          <p style="color:var(--muted);font-size:.92rem">Service workers, cache-first strategies, and background sync keep your app available everywhere, always.</p>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <div class="icon-box">♿</div>
+          <h3 style="margin-bottom:.5rem">Accessibility (A11y)</h3>
+          <p style="color:var(--muted);font-size:.92rem">WCAG 2.2 AA compliance, semantic HTML, ARIA patterns, and keyboard navigation baked in from day one.</p>
+        </div>
+        <div class="card reveal reveal-delay-3">
+          <div class="icon-box">🔍</div>
+          <h3 style="margin-bottom:.5rem">Technical SEO</h3>
+          <p style="color:var(--muted);font-size:.92rem">Structured data, meta strategy, Core Web Vitals as ranking signals, and crawlability audits for organic growth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Testimonials -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">Social Proof</p>
+      <h2 class="section-title reveal reveal-delay-1">What Our Clients Say</h2>
+      <p class="section-desc reveal reveal-delay-2">Real words from the teams we've worked alongside to transform their digital presence.</p>
+      <div class="grid-3">
+        <div class="card reveal">
+          <p class="testimonial">"Apex took our Lighthouse score from 42 to 100. Our conversion rate jumped 31% in the first month. Worth every penny."</p>
+          <span class="testimonial-author">— Sarah K., CTO at NovaTech</span>
+        </div>
+        <div class="card reveal reveal-delay-1">
+          <p class="testimonial">"The attention to CLS and INP details was extraordinary. Our users immediately noticed the snappiness. Incredible team."</p>
+          <span class="testimonial-author">— Marcus T., VP Product at Solaris Labs</span>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <p class="testimonial">"From kickoff to launch in 8 weeks. The process was transparent, the code was clean, and the results speak for themselves."</p>
+          <span class="testimonial-author">— Priya R., Founder at Orbit SaaS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Apex Studio · Built for speed, designed to last.</p>
+  </footer>
+</main>
+
+<!-- ===================== ABOUT PAGE ===================== -->
+<main class="page" id="page-about" role="main">
+  <section class="hero" style="min-height:min(60vh,420px)">
+    <span class="hero-eyebrow">Our Story</span>
+    <h1>Built by Makers Who Obsess Over Details</h1>
+    <p>We're a small team with a big conviction: the web should be fast for everyone, everywhere—regardless of device or connection speed.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Mission -->
+  <section>
+    <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center">
+      <div>
+        <p class="section-label reveal">Mission</p>
+        <h2 class="section-title reveal reveal-delay-1">Performance Is Not a Feature—It's a Right</h2>
+        <p style="color:var(--muted);margin-bottom:1rem;line-height:1.75" class="reveal reveal-delay-2">
+          Founded in 2013, Apex Studio set out to prove that beautiful design and exceptional performance aren't in conflict—they're inseparable. We believe every millisecond of latency has a human cost, and we dedicate ourselves to eliminating it.
+        </p>
+        <p style="color:var(--muted);line-height:1.75" class="reveal reveal-delay-3">
+          Today, our team of 18 engineers, designers, and strategists operates across three continents, delivering world-class digital products to clients who refuse to settle for average.
+        </p>
+      </div>
+      <div class="reveal reveal-delay-2" style="display:flex;flex-wrap:wrap;gap:1rem">
+        <div class="cwv-badge" style="flex:1;min-width:120px"><div class="cwv-score" style="font-size:1.8rem">2013</div><div class="cwv-name">Founded</div></div>
+        <div class="cwv-badge" style="flex:1;min-width:120px"><div class="cwv-score" style="font-size:1.8rem">18</div><div class="cwv-name">Team Members</div></div>
+        <div class="cwv-badge" style="flex:1;min-width:120px"><div class="cwv-score" style="font-size:1.8rem">32</div><div class="cwv-name">Countries Served</div></div>
+        <div class="cwv-badge" style="flex:1;min-width:120px"><div class="cwv-score" style="font-size:1.8rem">0</div><div class="cwv-name">Missed Deadlines</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Team -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">The Team</p>
+      <h2 class="section-title reveal reveal-delay-1">The Minds Behind the Magic</h2>
+      <p class="section-desc reveal reveal-delay-2">Each member brings deep craft expertise and a shared relentless drive to exceed expectations.</p>
+      <div class="team-grid">
+        <div class="team-card card reveal">
+          <div class="team-av">AJ</div>
+          <h3>Alex Jensen</h3>
+          <p style="color:var(--accent);font-size:.85rem;margin:.25rem 0">Founder & CEO</p>
+          <p style="color:var(--muted);font-size:.88rem">Performance architect & Google Developer Expert. 15 years building fast web.</p>
+        </div>
+        <div class="team-card card reveal reveal-delay-1">
+          <div class="team-av" style="background:linear-gradient(135deg,#ff6584,#f9a8d4)">MR</div>
+          <h3>Mia Russo</h3>
+          <p style="color:var(--accent);font-size:.85rem;margin:.25rem 0">Head of Design</p>
+          <p style="color:var(--muted);font-size:.88rem">Ex-Google designer passionate about accessible, research-driven interfaces.</p>
+        </div>
+        <div class="team-card card reveal reveal-delay-2">
+          <div class="team-av" style="background:linear-gradient(135deg,#06b6d4,#6c63ff)">KP</div>
+          <h3>Kai Park</h3>
+          <p style="color:var(--accent);font-size:.85rem;margin:.25rem 0">Lead Engineer</p>
+          <p style="color:var(--muted);font-size:.88rem">Open-source contributor and INP specialist. Hates long tasks more than bugs.</p>
+        </div>
+        <div class="team-card card reveal reveal-delay-3">
+          <div class="team-av" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">SN</div>
+          <h3>Sofia Navarro</h3>
+          <p style="color:var(--accent);font-size:.85rem;margin:.25rem 0">Strategy Lead</p>
+          <p style="color:var(--muted);font-size:.88rem">Translates data into action plans that connect performance to real revenue growth.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Values -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">What Drives Us</p>
+      <h2 class="section-title reveal reveal-delay-1">Values We Build Everything On</h2>
+      <p class="section-desc reveal reveal-delay-2">These aren't posters on a wall. They're the lens through which every decision is made.</p>
+      <div class="grid-3">
+        <div class="card reveal">
+          <div class="icon-box">🎯</div>
+          <h3 style="margin-bottom:.5rem">Precision</h3>
+          <p style="color:var(--muted);font-size:.92rem">We sweat the milliseconds, the microcopy, and the micro-interactions. Excellence lives in the details no one else tracks.</p>
+        </div>
+        <div class="card reveal reveal-delay-1">
+          <div class="icon-box">🤝</div>
+          <h3 style="margin-bottom:.5rem">Transparency</h3>
+          <p style="color:var(--muted);font-size:.92rem">Open communication, honest timelines, and shared metrics. You always know where your project stands and why.</p>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <div class="icon-box">♾️</div>
+          <h3 style="margin-bottom:.5rem">Continuous Growth</h3>
+          <p style="color:var(--muted);font-size:.92rem">The web evolves fast. We invest 20% of our time in learning new techniques to stay ahead of the curve for you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Apex Studio · Built for speed, designed to last.</p>
+  </footer>
+</main>
+
+<!-- ===================== CONTACT PAGE ===================== -->
+<main class="page" id="page-contact" role="main">
+  <section class="hero" style="min-height:min(60vh,420px)">
+    <span class="hero-eyebrow">Let's Connect</span>
+    <h1>Every Great Project Starts With a Conversation</h1>
+    <p>Tell us about your challenge. We'll come back within 24 hours with a fresh perspective and a clear path forward.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- Contact Form & Info -->
+  <section>
+    <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start">
+      <div>
+        <p class="section-label reveal">Send a Message</p>
+        <h2 class="section-title reveal reveal-delay-1" style="margin-bottom:2rem">Tell Us About Your Project</h2>
+        <div class="form-group reveal">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" placeholder="Jane Smith" autocomplete="name">
+        </div>
+        <div class="form-group reveal reveal-delay-1">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="jane@company.com" autocomplete="email">
+        </div>
+        <div class="form-group reveal reveal-delay-2">
+          <label for="service">Service Interested In</label>
+          <select id="service">
+            <option value="">Select a service...</option>
+            <option>UI/UX Design</option>
+            <option>Performance Engineering</option>
+            <option>Mobile App Development</option>
+            <option>PWA & Offline</option>
+            <option>Technical SEO</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group reveal reveal-delay-3">
+          <label for="message">Project Details</label>
+          <textarea id="message" placeholder="Tell us about your goals, timeline, and budget..."></textarea>
+        </div>
+        <button class="btn btn-primary reveal" id="submitBtn" onclick="handleSubmit()" style="width:100%">
+          Send Message →
+        </button>
+        <p id="formMsg" style="margin-top:1rem;color:var(--accent);display:none;font-weight:600">✅ Message sent! We'll be in touch within 24 hours.</p>
+      </div>
+      <div>
+        <p class="section-label reveal">Contact Info</p>
+        <h2 class="section-title reveal reveal-delay-1">Other Ways to Reach Us</h2>
+        <div style="display:flex;flex-direction:column;gap:1rem;margin-top:2rem">
+          <div class="card reveal">
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div class="icon-box" style="margin:0">📧</div>
+              <div>
+                <div style="font-weight:600">Email</div>
+                <div style="color:var(--muted);font-size:.9rem">hello@apexstudio.co</div>
+              </div>
+            </div>
+          </div>
+          <div class="card reveal reveal-delay-1">
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div class="icon-box" style="margin:0">📞</div>
+              <div>
+                <div style="font-weight:600">Phone</div>
+                <div style="color:var(--muted);font-size:.9rem">+1 (555) 890-4200</div>
+              </div>
+            </div>
+          </div>
+          <div class="card reveal reveal-delay-2">
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div class="icon-box" style="margin:0">🕐</div>
+              <div>
+                <div style="font-weight:600">Response Time</div>
+                <div style="color:var(--muted);font-size:.9rem">Within 24 hours, Mon–Fri</div>
+              </div>
+            </div>
+          </div>
+          <div class="card reveal reveal-delay-3">
+            <div style="display:flex;align-items:center;gap:1rem">
+              <div class="icon-box" style="margin:0">📍</div>
+              <div>
+                <div style="font-weight:600">Location</div>
+                <div style="color:var(--muted);font-size:.9rem">Remote-first · Based in Austin, TX</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FAQ -->
+  <section>
+    <div class="container">
+      <p class="section-label reveal">FAQ</p>
+      <h2 class="section-title reveal reveal-delay-1">Common Questions</h2>
+      <p class="section-desc reveal reveal-delay-2">Quick answers to the things clients most often want to know before getting started.</p>
+      <div class="grid-3">
+        <div class="card reveal">
+          <h3 style="margin-bottom:.5rem;font-size:1rem">How long do projects take?</h3>
+          <p style="color:var(--muted);font-size:.9rem">Most projects run 4–12 weeks depending on scope. We share a detailed timeline at the start of every engagement.</p>
+        </div>
+        <div class="card reveal reveal-delay-1">
+          <h3 style="margin-bottom:.5rem;font-size:1rem">Do you offer ongoing maintenance?</h3>
+          <p style="color:var(--muted);font-size:.9rem">Yes. All plans include post-launch support, and we offer monthly retainers for continuous optimization and updates.</p>
+        </div>
+        <div class="card reveal reveal-delay-2">
+          <h3 style="margin-bottom:.5rem;font-size:1rem">What's your tech stack?</h3>
+          <p style="color:var(--muted);font-size:.9rem">We're stack-agnostic and choose the best tool for your needs—from vanilla HTML to React, Next.js, and edge platforms.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Apex Studio · Built for speed, designed to last.</p>
+  </footer>
+</main>
+
+<!-- ============================================================
+     JAVASCRIPT — deferred, async, non-blocking
+     ============================================================ -->
+<script>
+  'use strict';
+  // ── Router ──────────────────────────────────────────────────
+  const pages = ['home','gallery','services','about','contact'];
+  let currentPage = 'home';
+
+  function navigate(id, e) {
+    if (e) e.preventDefault();
+    if (!pages.includes(id)) return;
+    document.getElementById('page-'+currentPage).classList.remove('active');
+    currentPage = id;
+    const el = document.getElementById('page-'+id);
+    el.classList.add('active');
+    // Reset scroll
+    window.scrollTo({top:0,behavior:'instant'});
+    updateActiveLinks(id);
+    // Trigger reveals for new page
+    scheduleReveal();
+    // Register SW if navigating for first time
+    registerSW();
+  }
+
+  // Delegate navigation clicks
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[data-page]');
+    if (!link) return;
+    const pageId = link.getAttribute('data-page').replace('-m','');
+    navigate(pageId, e);
+    // Close mobile nav if open
+    if (mNav.classList.contains('open')) closeMobile();
+  });
+
+  function updateActiveLinks(id) {
+    document.querySelectorAll('[data-page]').forEach(a => {
+      const pg = a.getAttribute('data-page').replace('-m','');
+      a.classList.toggle('active', pg === id);
+    });
+  }
+
+  // ── Theme toggle ────────────────────────────────────────────
+  const root = document.documentElement;
+  const themeBtn = document.getElementById('themeToggle');
+  const themeBtnMobile = document.getElementById('themeToggleMobile');
+  const themeMeta = document.getElementById('themeMetaColor');
+
+  // Respect system preference on first load
+  let isDark = !window.matchMedia('(prefers-color-scheme: light)').matches;
+  function applyTheme(dark) {
+    isDark = dark;
+    root.classList.toggle('light', !dark);
+    const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    themeBtn.setAttribute('aria-label', label);
+    themeBtnMobile.setAttribute('aria-label', label);
+    themeMeta.setAttribute('content', dark ? '#0a0a0f' : '#f5f5fa');
+  }
+  applyTheme(isDark);
+  themeBtn.addEventListener('click', () => applyTheme(!isDark));
+  themeBtnMobile.addEventListener('click', () => applyTheme(!isDark));
+
+  // ── Mobile nav ──────────────────────────────────────────────
+  const ham = document.getElementById('hamburger');
+  const mNav = document.getElementById('mobileNav');
+  ham.addEventListener('click', () => {
+    const open = mNav.classList.toggle('open');
+    ham.classList.toggle('open', open);
+    ham.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  function closeMobile() {
+    mNav.classList.remove('open');
+    ham.classList.remove('open');
+    ham.setAttribute('aria-expanded','false');
+    document.body.style.overflow = '';
+  }
+
+  // ── Scroll progress bar ─────────────────────────────────────
+  const scrollBar = document.getElementById('scrollBar');
+  function updateScroll() {
+    const page = document.getElementById('page-'+currentPage);
+    const h = page.scrollHeight - window.innerHeight;
+    scrollBar.style.width = (h > 0 ? (window.scrollY/h*100) : 0)+'%';
+  }
+  window.addEventListener('scroll', updateScroll, {passive:true});
+
+  // ── Reveal on scroll (IntersectionObserver — no layout cost) ─
+  let revealObserver;
+  function scheduleReveal() {
+    // Slight delay so new page paints first
+    requestAnimationFrame(() => {
+      if (revealObserver) revealObserver.disconnect();
+      revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            revealObserver.unobserve(e.target);
+          }
+        });
+      }, {threshold: 0.12, rootMargin:'0px 0px -40px 0px'});
+
+      document.querySelectorAll('#page-'+currentPage+' .reveal').forEach(el => {
+        revealObserver.observe(el);
+      });
+    });
+  }
+
+  // ── Projects Gallery ────────────────────────────────────────
+  const projects = [
+    {tag:'Web App',title:'NovaTech Dashboard',desc:'Real-time analytics platform with sub-100ms interactions, serving 2M+ daily active users.',color:'#6c63ff'},
+    {tag:'E-Commerce',title:'Orbit Shop',desc:'Headless commerce storefront achieving 98/100 Lighthouse with a 45% checkout conversion lift.',color:'#ff6584'},
+    {tag:'Mobile PWA',title:'TrailSync App',desc:'Offline-first PWA for trail runners. Works perfectly at zero signal. 4.9★ store rating.',color:'#06b6d4'},
+    {tag:'Brand + Web',title:'Solaris Rebrand',desc:'Full identity refresh and marketing site. Organic traffic grew 280% in 90 days post-launch.',color:'#f59e0b'},
+    {tag:'Performance',title:'Meridian Rescue',desc:'Inherited a site with 23 Lighthouse score. Delivered 100/100 in 6 weeks through deep CWV work.',color:'#10b981'},
+    {tag:'SaaS',title:'Coda CRM',desc:'Scalable SaaS platform with drag-and-drop UI, real-time sync, and WCAG AA accessibility.',color:'#8b5cf6'},
+    {tag:'API + UI',title:'PulseMap',desc:'Live data visualization tool rendering 500k data points smoothly using WebGL and canvas.',color:'#ec4899'},
+    {tag:'Content Site',title:'Lumina Magazine',desc:'Media site with ISR, image CDN, and 2.1s global LCP. Ad revenue up 60% after relaunch.',color:'#f97316'},
+    {tag:'Web App',title:'Strata Finance',desc:'Secure fintech dashboard. CSP headers, two-factor flows, and 0 CLS on all breakpoints.',color:'#6c63ff'},
+    {tag:'Mobile-First',title:'MapRoute CMS',desc:'Headless CMS with a visual builder. Editors ship pages without touching code, at 100 speed.',color:'#14b8a6'},
+    {tag:'3D / WebGL',title:'Forma Showcase',desc:'Immersive 3D product showcase using Three.js, loaded progressively to hit 2.3s LCP.',color:'#a855f7'},
+    {tag:'Accessibility',title:'OpenDoor Gov',desc:'Government portal redesign achieving WCAG AAA. Screen-reader usage up 4× post-launch.',color:'#22c55e'},
+  ];
+
+  function buildProjects() {
+    const grid = document.getElementById('projectsGrid');
+    if (!grid) return;
+    const frag = document.createDocumentFragment();
+    projects.forEach((p,i) => {
+      const card = document.createElement('article');
+      card.className = 'card reveal'+(i%3===1?' reveal-delay-1':i%3===2?' reveal-delay-2':'');
+      card.innerHTML = `
+        <div class="proj-img" style="background:linear-gradient(135deg,${p.color}22,${p.color}44)">
+          <svg viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="400" height="225" fill="${p.color}18"/>
+            <rect x="40" y="40" width="180" height="12" rx="6" fill="${p.color}80"/>
+            <rect x="40" y="64" width="280" height="8" rx="4" fill="${p.color}40"/>
+            <rect x="40" y="84" width="220" height="8" rx="4" fill="${p.color}30"/>
+            <rect x="40" y="120" width="140" height="55" rx="8" fill="${p.color}25"/>
+            <rect x="200" y="120" width="160" height="55" rx="8" fill="${p.color}18"/>
+            <circle cx="340" cy="50" r="28" fill="${p.color}30"/>
+            <circle cx="340" cy="50" r="16" fill="${p.color}60"/>
+          </svg>
+        </div>
+        <span class="proj-tag">${p.tag}</span>
+        <h3 class="proj-title">${p.title}</h3>
+        <p class="proj-desc">${p.desc}</p>
+        <button class="btn btn-outline" style="margin-top:1rem;padding:.6rem 1.2rem;font-size:.85rem" onclick="navigate('contact')">View Case Study →</button>
+      `;
+      frag.appendChild(card);
+    });
+    grid.appendChild(frag);
+  }
+
+  // ── Form handler ────────────────────────────────────────────
+  function handleSubmit() {
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('formMsg');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    // Simulate async send — yields to main thread
+    setTimeout(() => {
+      btn.style.display = 'none';
+      msg.style.display = 'block';
+      ['name','email','message'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.value = '';
+      });
+    }, 800);
+  }
+
+  // ── Service Worker registration ──────────────────────────────
+  let swRegistered = false;
+  function registerSW() {
+    if (swRegistered || !('serviceWorker' in navigator)) return;
+    swRegistered = true;
+    // Inline SW as blob URL (no separate file needed in this sandbox)
+    const swCode = `
+const CACHE='apex-v1';
+const ASSETS=['/'];
+self.addEventListener('install',e=>{
+  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
+  self.skipWaiting();
+});
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch',e=>{
+  if(e.request.method!=='GET')return;
+  e.respondWith(
+    caches.match(e.request).then(cached=>cached||fetch(e.request).then(res=>{
+      const clone=res.clone();
+      caches.open(CACHE).then(c=>c.put(e.request,clone));
+      return res;
+    }))
+  );
+});
+    `;
+    const blob = new Blob([swCode],{type:'application/javascript'});
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url, {scope:'/'}).catch(()=>{});
+  }
+
+  // ── Init ─────────────────────────────────────────────────────
+  function init() {
+    buildProjects();
+    scheduleReveal();
+    updateActiveLinks('home');
+    registerSW();
+  }
+
+  // Use scheduler API if available (INP-friendly), else rAF
+  if (typeof scheduler !== 'undefined' && scheduler.postTask) {
+    scheduler.postTask(init, {priority:'background'});
+  } else {
+    requestAnimationFrame(() => setTimeout(init, 0));
+  }
+</script>
+</body>
+</html>

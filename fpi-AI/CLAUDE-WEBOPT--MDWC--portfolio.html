@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="color-scheme" content="light dark"/>
+<meta id="themeMetaColor" name="theme-color" content="#FFF8F5"/>
+<title>Alex Ramos — Android & Material Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+
+<style>
+/* ============================================================
+   ITCSS — 1. SETTINGS
+   ============================================================ */
+:root {
+  --md-primary:              #7D4E2F;
+  --md-on-primary:           #FFFFFF;
+  --md-primary-container:    #FFDCC6;
+  --md-on-primary-container: #2E1200;
+  --md-secondary:            #8B3A1A;
+  --md-on-secondary:         #FFFFFF;
+  --md-secondary-container:  #FFDBD0;
+  --md-on-secondary-container:#3E1A10;
+  --md-tertiary-container:   #F4E2A8;
+  --md-surface:              #FFF8F5;
+  --md-surface-variant:      #F4DDD1;
+  --md-surface-low:          #FFF1EB;
+  --md-surface-mid:          #FDEAE1;
+  --md-surface-high:         #F7E0D5;
+  --md-outline:              #C4A090;
+  --md-outline-variant:      #E8CABF;
+  --md-on-surface:           #22130A;
+  --md-on-surface-var:       #5C3D2E;
+  --md-background:           #FFF8F5;
+  --md-elev-1: 0 1px 2px rgba(120,60,20,.10),0 1px 3px 1px rgba(120,60,20,.06);
+  --md-elev-2: 0 1px 2px rgba(120,60,20,.12),0 2px 6px 2px rgba(120,60,20,.08);
+  --md-elev-3: 0 4px 8px 3px rgba(120,60,20,.10),0 1px 3px rgba(120,60,20,.10);
+  --rail-w-collapsed: 80px;
+  --rail-w-expanded:  256px;
+  --nav-bar-h:        80px;
+  --r-xs:4px; --r-s:8px; --r-m:12px; --r-l:16px; --r-xl:28px; --r-full:9999px;
+  --font-d:'DM Serif Display',serif;
+  --font-b:'DM Sans',sans-serif;
+  --dur-s:200ms; --dur-m:350ms; --dur-l:500ms;
+  --ease-std:cubic-bezier(.2,0,0,1);
+  --ease-dec:cubic-bezier(0,0,0,1);
+}
+[data-theme="dark"] {
+  --md-primary:              #FFB68A;
+  --md-on-primary:           #4A1E00;
+  --md-primary-container:    #6A3618;
+  --md-on-primary-container: #FFDCC6;
+  --md-secondary:            #FFB09A;
+  --md-on-secondary:         #561F0A;
+  --md-secondary-container:  #73301D;
+  --md-on-secondary-container:#FFDBD0;
+  --md-tertiary-container:   #524618;
+  --md-surface:              #1A0F09;
+  --md-surface-variant:      #3E2820;
+  --md-surface-low:          #22130A;
+  --md-surface-mid:          #291910;
+  --md-surface-high:         #342015;
+  --md-outline:              #9C7060;
+  --md-outline-variant:      #5C3D2E;
+  --md-on-surface:           #F1DDD3;
+  --md-on-surface-var:       #D4B4A4;
+  --md-background:           #1A0F09;
+  --md-elev-1: 0 1px 2px rgba(0,0,0,.30),0 1px 3px 1px rgba(0,0,0,.20);
+  --md-elev-2: 0 1px 2px rgba(0,0,0,.35),0 2px 6px 2px rgba(0,0,0,.25);
+  --md-elev-3: 0 4px 8px 3px rgba(0,0,0,.28),0 1px 3px rgba(0,0,0,.28);
+}
+
+/* ============================================================
+   ITCSS — 3. GENERIC
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+html{scroll-behavior:smooth}
+
+/* ============================================================
+   ITCSS — 4. ELEMENTS
+   ============================================================ */
+body{
+  font-family:var(--font-b);background:var(--md-background);color:var(--md-on-surface);
+  line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  transition:background var(--dur-m) var(--ease-std),color var(--dur-m) var(--ease-std);
+}
+h1,h2,h3,h4{font-family:var(--font-d);line-height:1.15;color:var(--md-on-surface)}
+a{color:var(--md-primary);text-decoration:none;transition:color var(--dur-s) var(--ease-std)}
+a:hover{color:var(--md-secondary)}
+img{display:block;max-width:100%}
+button{font-family:var(--font-b);cursor:pointer}
+
+/* ============================================================
+   ITCSS — 5. OBJECTS
+   ============================================================ */
+.o-wrap{width:min(1120px,100% - 2rem);margin-inline:auto}
+.o-section{padding-block:clamp(4rem,8vw,7rem)}
+.o-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1.5rem}
+.o-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1.25rem}
+.o-grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:1.25rem}
+
+/* ============================================================
+   ITCSS — 6. COMPONENTS
+   ============================================================ */
+
+/* ── Material Symbol base ── */
+.ms{
+  font-family:'Material Symbols Outlined';
+  font-style:normal;font-weight:normal;
+  font-size:24px;line-height:1;
+  letter-spacing:normal;text-transform:none;
+  display:inline-flex;align-items:center;justify-content:center;
+  white-space:nowrap;word-wrap:normal;direction:ltr;
+  -webkit-font-feature-settings:'liga';font-feature-settings:'liga';
+  -webkit-font-smoothing:antialiased;
+  font-variation-settings:'opsz' 24,'wght' 400,'FILL' 0,'GRAD' 0;
+  user-select:none;
+  transition:font-variation-settings var(--dur-s) var(--ease-std);
+}
+.c-rail__item .ms{font-variation-settings:'opsz' 24,'wght' 400,'FILL' 0,'GRAD' 0}
+.c-rail__item[aria-current="page"] .ms{font-variation-settings:'opsz' 24,'wght' 500,'FILL' 1,'GRAD' 0}
+.c-nav-bar__item .ms{font-variation-settings:'opsz' 24,'wght' 400,'FILL' 0,'GRAD' 0}
+.c-nav-bar__item[aria-current="page"] .ms{font-variation-settings:'opsz' 24,'wght' 500,'FILL' 1,'GRAD' 0}
+
+/* ── Scroll progress ── */
+#scrollBar{
+  position:fixed;inset-block-start:0;inset-inline:0;z-index:300;
+  height:3px;width:0%;background:var(--md-primary);
+  transition:width .1s linear;pointer-events:none;
+}
+
+/* ── Layout shell ── */
+.l-shell{display:flex;min-height:100svh}
+.l-content{
+  flex:1;min-width:0;
+  margin-inline-start:var(--rail-w-collapsed);
+  transition:margin-inline-start var(--dur-m) var(--ease-std);
+}
+.l-shell[data-rail="expanded"][data-rail-modal="false"] .l-content{margin-inline-start:var(--rail-w-expanded)}
+.l-shell[data-rail="hidden"] .l-content{margin-inline-start:0}
+@media(max-width:719px){.l-content{margin-inline-start:0!important;padding-block-end:var(--nav-bar-h)}}
+
+/* ── Navigation Rail ── */
+.c-rail{
+  position:fixed;inset-block:0;inset-inline-start:0;z-index:200;
+  width:var(--rail-w-collapsed);
+  background:var(--md-surface-low);
+  border-inline-end:1px solid var(--md-outline-variant);
+  display:flex;flex-direction:column;align-items:center;
+  padding-block:12px 0;overflow:hidden;
+  transition:width var(--dur-m) var(--ease-std),transform var(--dur-m) var(--ease-std),
+    box-shadow var(--dur-m) var(--ease-std),background var(--dur-m) var(--ease-std);
+  will-change:width,transform;
+}
+.c-rail[data-state="collapsed"]{width:var(--rail-w-collapsed);transform:translateX(0)}
+.c-rail[data-state="expanded"]{width:var(--rail-w-expanded);align-items:flex-start}
+.c-rail[data-state="hidden"]{transform:translateX(-100%);box-shadow:none}
+.c-rail[data-state="expanded"][data-modal="true"]{box-shadow:var(--md-elev-3)}
+
+.c-rail__header{
+  display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding-inline:8px;width:100%;padding-block-end:4px;
+}
+.c-rail[data-state="expanded"] .c-rail__header{align-items:flex-start}
+
+.c-rail__menu{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;border-radius:var(--r-l);
+  border:none;background:transparent;color:var(--md-on-surface-var);
+  transition:background var(--dur-s) var(--ease-std),color var(--dur-s) var(--ease-std);
+}
+.c-rail__menu:hover{background:var(--md-surface-variant);color:var(--md-on-surface)}
+.c-rail__menu:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px}
+
+.c-rail__fab{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:.5rem;min-width:56px;height:56px;padding-inline:16px;
+  border-radius:var(--r-xl);border:none;
+  background:var(--md-primary-container);color:var(--md-on-primary-container);
+  font-size:1.25rem;font-weight:600;box-shadow:var(--md-elev-2);
+  white-space:nowrap;overflow:hidden;
+  transition:min-width var(--dur-m) var(--ease-std),padding var(--dur-m) var(--ease-std),
+    box-shadow var(--dur-s) var(--ease-std),background var(--dur-m) var(--ease-std);
+}
+.c-rail__fab:hover{box-shadow:var(--md-elev-3)}
+.c-rail__fab:focus-visible{outline:3px solid var(--md-primary);outline-offset:3px}
+.c-rail__fab-label{
+  font-size:.9375rem;font-weight:600;
+  max-width:0;opacity:0;overflow:hidden;pointer-events:none;
+  transition:max-width var(--dur-m) var(--ease-std),opacity var(--dur-s) var(--ease-std);
+}
+.c-rail[data-state="expanded"] .c-rail__fab-label{max-width:160px;opacity:1;pointer-events:auto}
+.c-rail[data-state="expanded"] .c-rail__fab{
+  min-width:calc(var(--rail-w-expanded) - 32px);
+  justify-content:flex-start;padding-inline:20px;
+}
+
+.c-rail__divider{
+  width:calc(100% - 16px);height:1px;
+  background:var(--md-outline-variant);
+  margin-block:4px;flex-shrink:0;align-self:center;
+}
+
+.c-rail__nav{
+  display:flex;flex-direction:column;align-items:center;
+  gap:4px;width:100%;padding-inline:8px;flex:1;
+  overflow-y:auto;overflow-x:hidden;padding-block:4px 12px;
+  scrollbar-width:thin;scrollbar-color:var(--md-outline-variant) transparent;
+}
+.c-rail[data-state="expanded"] .c-rail__nav{align-items:flex-start}
+
+.c-rail__item{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;min-height:56px;padding-block:4px;
+  border:none;background:transparent;border-radius:var(--r-l);
+  gap:4px;cursor:pointer;
+  transition:background var(--dur-s) var(--ease-std);
+}
+.c-rail__item:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px}
+.c-rail[data-state="expanded"] .c-rail__item{
+  flex-direction:row;align-items:center;justify-content:flex-start;
+  gap:0;padding-inline:0;padding-block:0;min-height:56px;border-radius:var(--r-full);
+}
+
+.c-rail__indicator{
+  position:absolute;top:0.21rem;display:flex;align-items:center;justify-content:center;
+  width:56px;height:32px;border-radius:var(--r-full);flex-shrink:0;
+  transition:background var(--dur-s) var(--ease-std),width var(--dur-m) var(--ease-std);
+}
+.c-rail__item[aria-current="page"] .c-rail__indicator{background:var(--md-secondary-container)}
+.c-rail[data-state="expanded"] .c-rail__indicator{
+  width:calc(var(--rail-w-expanded) - 16px);height:56px;
+  border-radius:var(--r-full);position:absolute;inset:0;z-index:0;
+}
+
+.c-rail__icon{
+  font-size:24px;line-height:1;flex-shrink:0;
+  color:var(--md-on-surface-var);
+  transition:color var(--dur-s) var(--ease-std),font-variation-settings var(--dur-s) var(--ease-std);
+  display:flex;align-items:center;justify-content:center;
+  width:56px;height:100%;position:relative;z-index:1;
+}
+.c-rail[data-state="expanded"] .c-rail__icon{width:56px;height:56px;flex-shrink:0}
+.c-rail__item[aria-current="page"] .c-rail__icon{color:var(--md-on-secondary-container)}
+
+.c-rail__label{
+  font-size:.75rem;font-weight:500;color:var(--md-on-surface-var);
+  line-height:1.2;text-align:center;white-space:nowrap;
+  transition:color var(--dur-s) var(--ease-std),font-size var(--dur-m) var(--ease-std);
+}
+.c-rail__item[aria-current="page"] .c-rail__label{color:var(--md-secondary);font-weight:600}
+.c-rail[data-state="expanded"] .c-rail__label{
+  font-size:.9375rem;font-weight:500;text-align:left;flex:1;position:relative;z-index:1;
+}
+.c-rail[data-state="expanded"] .c-rail__item[aria-current="page"] .c-rail__label{
+  color:var(--md-on-secondary-container);font-weight:600;
+}
+
+.c-rail__footer{
+  padding:8px;width:100%;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  border-block-start:1px solid var(--md-outline-variant);
+}
+.c-rail[data-state="expanded"] .c-rail__footer{
+  align-items:flex-start;flex-direction:row;padding-inline:8px;
+}
+
+/* ── Rail scrim ── */
+.c-rail-scrim{
+  position:fixed;inset:0;z-index:199;
+  background:rgba(34,19,10,.38);
+  opacity:0;pointer-events:none;
+  transition:opacity var(--dur-m) var(--ease-std);
+}
+.c-rail-scrim.visible{opacity:1;pointer-events:auto}
+
+/* ── Navigation Bar (small screens) ── */
+.c-nav-bar{
+  display:none;
+  position:fixed;inset-block-end:0;inset-inline:0;z-index:200;
+  height:var(--nav-bar-h);
+  background:var(--md-surface-low);
+  border-block-start:1px solid var(--md-outline-variant);
+  box-shadow:0 -1px 3px rgba(120,60,20,.08);
+  padding-inline:8px;padding-block:8px 12px;
+  transition:background var(--dur-m) var(--ease-std);
+}
+@media(max-width:719px){
+  .c-nav-bar{display:flex;align-items:flex-start;justify-content:space-around}
+  /* Rail hidden by default on mobile; slides in when toggled */
+  .c-rail[data-state="collapsed"]{transform:translateX(-100%)}
+  .c-rail[data-state="expanded"]{transform:translateX(0);box-shadow:var(--md-elev-3)}
+  /* Topbar always visible on mobile */
+  .c-topbar{display:block;inset-inline-start:0!important}
+}
+.c-nav-bar__item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;flex:1;border:none;background:transparent;cursor:pointer;
+  padding-block:0;min-height:48px;border-radius:var(--r-l);
+  transition:background var(--dur-s) var(--ease-std);
+}
+.c-nav-bar__item:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px}
+.c-nav-bar__indicator{
+  display:flex;align-items:center;justify-content:center;
+  width:64px;height:32px;border-radius:var(--r-full);
+  transition:background var(--dur-s) var(--ease-std);position:relative;
+}
+.c-nav-bar__item[aria-current="page"] .c-nav-bar__indicator{background:var(--md-secondary-container)}
+.c-nav-bar__icon{
+  font-size:24px;color:var(--md-on-surface-var);
+  transition:color var(--dur-s) var(--ease-std),font-variation-settings var(--dur-s) var(--ease-std);
+}
+.c-nav-bar__item[aria-current="page"] .c-nav-bar__icon{color:var(--md-on-secondary-container)}
+.c-nav-bar__label{
+  font-size:.75rem;font-weight:500;color:var(--md-on-surface-var);white-space:nowrap;
+  transition:color var(--dur-s) var(--ease-std);
+}
+.c-nav-bar__item[aria-current="page"] .c-nav-bar__label{color:var(--md-secondary);font-weight:600}
+
+/* ── Icon action button ── */
+.c-icon-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:48px;height:48px;border-radius:var(--r-full);
+  border:none;background:transparent;color:var(--md-on-surface-var);
+  font-size:1.2rem;flex-shrink:0;
+  transition:background var(--dur-s) var(--ease-std),color var(--dur-s) var(--ease-std);
+}
+.c-icon-btn:hover{background:var(--md-surface-variant);color:var(--md-on-surface)}
+.c-icon-btn:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px}
+
+/* ── Top App Bar ── */
+.c-topbar{
+  position:fixed;inset-block-start:3px;
+  inset-inline-start:var(--rail-w-collapsed);inset-inline-end:0;
+  z-index:100;
+  background:color-mix(in srgb,var(--md-surface) 90%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-block-end:1px solid var(--md-outline-variant);
+  overflow:hidden;
+  transition:box-shadow var(--dur-s) var(--ease-std),background var(--dur-m) var(--ease-std),
+    inset-inline-start var(--dur-m) var(--ease-std);
+}
+.c-topbar.is-scrolled{box-shadow:var(--md-elev-2)}
+.l-shell[data-rail="expanded"][data-rail-modal="false"] .c-topbar{inset-inline-start:var(--rail-w-expanded)}
+.l-shell[data-rail="hidden"] .c-topbar{inset-inline-start:0}
+
+.c-topbar__primary{
+  display:flex;align-items:center;gap:.25rem;
+  padding:.625rem .75rem .625rem .5rem;min-height:56px;
+}
+.c-topbar__title{
+  font-family:var(--font-d);font-size:1.125rem;color:var(--md-primary);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.c-topbar__actions{display:flex;gap:.25rem;align-items:center;flex-shrink:0}
+
+.c-topbar__nav{
+  display:flex;align-items:center;gap:2px;
+  padding-inline:.5rem;padding-block-end:6px;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+  max-height:56px;opacity:1;
+  transition:max-height var(--dur-m) var(--ease-std),
+    opacity var(--dur-m) var(--ease-std),padding var(--dur-m) var(--ease-std);
+}
+.c-topbar__nav::-webkit-scrollbar{display:none}
+.c-topbar.is-compact .c-topbar__nav{max-height:0;opacity:0;padding-block-end:0;pointer-events:none}
+
+.c-topbar__item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;min-width:64px;padding-inline:8px;padding-block:4px;
+  border:none;background:transparent;border-radius:var(--r-l);
+  cursor:pointer;flex-shrink:0;
+  transition:background var(--dur-s) var(--ease-std);
+}
+.c-topbar__item:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px}
+.c-topbar__item-indicator{
+  display:flex;align-items:center;justify-content:center;
+  width:64px;height:32px;border-radius:var(--r-full);
+  transition:background var(--dur-s) var(--ease-std);
+}
+.c-topbar__item[aria-current="page"] .c-topbar__item-indicator{background:var(--md-secondary-container)}
+.c-topbar__item .ms{
+  font-size:22px;color:var(--md-on-surface-var);
+  transition:color var(--dur-s) var(--ease-std),font-variation-settings var(--dur-s) var(--ease-std);
+  font-variation-settings:'opsz' 22,'wght' 400,'FILL' 0,'GRAD' 0;
+}
+.c-topbar__item[aria-current="page"] .ms{
+  color:var(--md-on-secondary-container);
+  font-variation-settings:'opsz' 22,'wght' 500,'FILL' 1,'GRAD' 0;
+}
+.c-topbar__item-label{
+  font-size:.6875rem;font-weight:500;color:var(--md-on-surface-var);
+  white-space:nowrap;line-height:1;transition:color var(--dur-s) var(--ease-std);
+}
+.c-topbar__item[aria-current="page"] .c-topbar__item-label{color:var(--md-secondary);font-weight:600}
+
+/* ── Pages ── */
+.page{display:none;min-height:100svh;padding-block-start:112px}
+.page.active{display:block}
+@media(max-width:719px){.page{padding-block-start:0}}
+
+/* ── Hero ── */
+.c-hero{
+  min-height:100svh;display:grid;place-items:center;
+  padding-block-start:5rem;position:relative;
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 40%,color-mix(in srgb,var(--md-primary-container) 55%,transparent),transparent 70%),
+    radial-gradient(ellipse 50% 40% at 10% 90%,color-mix(in srgb,var(--md-secondary-container) 40%,transparent),transparent 70%);
+  transition:background var(--dur-l) var(--ease-std);
+}
+.c-hero__eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.875rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--md-primary);background:var(--md-primary-container);
+  padding:.375rem .875rem;border-radius:var(--r-full);margin-block-end:1.5rem;
+  animation:fadeUp var(--dur-l) var(--ease-dec) both;
+}
+.c-hero__eyebrow::before{
+  content:'';width:8px;height:8px;border-radius:50%;background:var(--md-primary);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.c-hero__title{font-size:clamp(3rem,7vw,6rem);margin-block-end:1.25rem;animation:fadeUp var(--dur-l) var(--ease-dec) .1s both}
+.c-hero__title em{font-style:italic;color:var(--md-primary)}
+.c-hero__sub{max-width:52ch;font-size:clamp(1rem,2vw,1.2rem);color:var(--md-on-surface-var);margin-block-end:2.5rem;animation:fadeUp var(--dur-l) var(--ease-dec) .2s both}
+.c-hero__actions{display:flex;flex-wrap:wrap;gap:.75rem;animation:fadeUp var(--dur-l) var(--ease-dec) .3s both}
+.c-hero__scroll{
+  position:absolute;inset-block-end:2.5rem;inset-inline-start:50%;translate:-50% 0;
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  font-size:.8125rem;color:var(--md-on-surface-var);
+  animation:fadeUp var(--dur-l) var(--ease-dec) .5s both;
+}
+.c-hero__scroll-line{
+  width:1px;height:48px;background:linear-gradient(to bottom,var(--md-outline),transparent);
+  animation:scrollLine 1.8s var(--ease-std) infinite;transform-origin:top;
+}
+@keyframes scrollLine{0%{transform:scaleY(0);opacity:0}40%{opacity:1}100%{transform:scaleY(1);opacity:0}}
+@keyframes fadeUp{from{opacity:0;translate:0 24px}to{opacity:1;translate:0 0}}
+@keyframes fadeRight{from{opacity:0;translate:-32px 0}to{opacity:1;translate:0 0}}
+
+/* ── Buttons ── */
+.c-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  min-height:48px;padding-inline:1.5rem;border-radius:var(--r-full);
+  font-size:.9375rem;font-weight:500;border:none;
+  transition:background var(--dur-s) var(--ease-std),box-shadow var(--dur-s) var(--ease-std);
+}
+.c-btn:focus-visible{outline:3px solid var(--md-primary);outline-offset:3px}
+.c-btn--filled{background:var(--md-primary);color:var(--md-on-primary)}
+.c-btn--filled:hover{background:color-mix(in srgb,var(--md-primary) 88%,black);box-shadow:var(--md-elev-2)}
+.c-btn--outlined{background:transparent;color:var(--md-primary);border:1.5px solid var(--md-outline)}
+.c-btn--outlined:hover{background:var(--md-primary-container);border-color:var(--md-primary)}
+
+/* ── Section labels ── */
+.c-label{font-size:.8125rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--md-primary);margin-block-end:.75rem}
+.c-title{font-size:clamp(2rem,4vw,3rem);margin-block-end:1rem}
+.c-desc{max-width:58ch;color:var(--md-on-surface-var);font-size:1.0625rem;margin-block-end:3rem}
+
+/* ── Page hero ── */
+.c-page-hero{
+  padding-block:clamp(3rem,6vw,5rem) 2rem;
+  padding-block-start:calc(clamp(3rem,6vw,5rem) + 1rem);
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,color-mix(in srgb,var(--md-primary-container) 45%,transparent),transparent 70%);
+}
+.c-page-hero__title{font-size:clamp(2.5rem,5vw,4rem);margin-block-end:.75rem}
+.c-page-hero__desc{font-size:1.0625rem;color:var(--md-on-surface-var);max-width:52ch}
+
+/* ── About ── */
+.c-about{background:var(--md-surface-low);transition:background var(--dur-m) var(--ease-std)}
+.c-about__grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+@media(max-width:720px){.c-about__grid{grid-template-columns:1fr;gap:2rem}}
+.c-about__avatar{aspect-ratio:1;border-radius:var(--r-xl);background:var(--md-primary-container);display:grid;place-items:center;box-shadow:var(--md-elev-2);overflow:hidden;max-width:380px}
+.c-about__avatar-inner{font-size:7rem;user-select:none;filter:drop-shadow(0 4px 16px rgba(120,60,20,.18))}
+.c-about__body p{color:var(--md-on-surface-var);margin-block-end:1rem;font-size:1.0625rem}
+.c-stats{display:flex;gap:2rem;margin-block-start:2rem;flex-wrap:wrap}
+.c-stat strong{display:block;font-family:var(--font-d);font-size:2.25rem;color:var(--md-primary)}
+.c-stat span{font-size:.875rem;color:var(--md-on-surface-var)}
+
+/* ── Cards ── */
+.c-card{
+  background:var(--md-surface-mid);border-radius:var(--r-xl);overflow:hidden;
+  box-shadow:var(--md-elev-1);cursor:pointer;
+  transition:box-shadow var(--dur-m) var(--ease-std),transform var(--dur-m) var(--ease-std),background var(--dur-m) var(--ease-std);
+}
+.c-card:hover{box-shadow:var(--md-elev-3);transform:translateY(-4px)}
+.c-card:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px}
+.c-card__thumb{aspect-ratio:16/10;display:grid;place-items:center;font-size:3.5rem}
+.c-card__body{padding:1.5rem}
+.c-card__tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-block-end:.875rem}
+.c-card__tag{font-size:.75rem;font-weight:500;padding:.25rem .75rem;border-radius:var(--r-full);background:var(--md-secondary-container);color:var(--md-on-secondary-container)}
+.c-card__title{font-size:1.25rem;margin-block-end:.5rem}
+.c-card__desc{font-size:.9375rem;color:var(--md-on-surface-var)}
+
+/* ── Post grid / cards ── */
+.c-post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:1.5rem;margin-block-start:3rem}
+.c-post-card{background:var(--md-surface-mid);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--md-elev-1);cursor:pointer;transition:box-shadow var(--dur-m) var(--ease-std),transform var(--dur-m) var(--ease-std)}
+.c-post-card:hover{box-shadow:var(--md-elev-3);transform:translateY(-3px)}
+.c-post-card:focus-visible{outline:3px solid var(--md-primary);outline-offset:2px}
+.c-post-card__header{padding:2rem 1.5rem 1rem;background:var(--md-surface-high);display:flex;align-items:center;justify-content:center;font-size:2.5rem;min-height:120px}
+.c-post-card__body{padding:1.5rem}
+.c-post-card__meta{font-size:.8125rem;color:var(--md-on-surface-var);margin-block-end:.5rem}
+.c-post-card__title{font-family:var(--font-d);font-size:1.25rem;margin-block-end:.5rem;color:var(--md-on-surface)}
+.c-post-card__excerpt{font-size:.9375rem;color:var(--md-on-surface-var)}
+
+/* ── Stories layout: featured + related ── */
+.c-stories-layout{display:grid;grid-template-columns:1fr;gap:3rem}
+.c-stories-featured{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:1.5rem}
+.c-stories-related-title{font-size:1.25rem;margin-block-end:1rem;color:var(--md-on-surface)}
+.c-stories-related{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:1rem}
+.c-story-related-card{
+  display:flex;align-items:center;gap:1rem;
+  padding:1rem 1.25rem;border-radius:var(--r-l);
+  background:var(--md-surface-mid);box-shadow:var(--md-elev-1);cursor:pointer;
+  transition:box-shadow var(--dur-s) var(--ease-std),transform var(--dur-s) var(--ease-std);
+}
+.c-story-related-card:hover{box-shadow:var(--md-elev-2);transform:translateX(4px)}
+.c-story-related-card__icon{font-size:1.5rem;flex-shrink:0}
+.c-story-related-card__title{font-size:.9375rem;font-weight:600;color:var(--md-on-surface);margin-block-end:.2rem}
+.c-story-related-card__meta{font-size:.8125rem;color:var(--md-on-surface-var)}
+
+/* ── Services ── */
+.c-service-card{background:var(--md-surface-mid);border-radius:var(--r-xl);padding:2rem;box-shadow:var(--md-elev-1);border:1px solid var(--md-outline-variant);transition:box-shadow var(--dur-m) var(--ease-std),transform var(--dur-m) var(--ease-std)}
+.c-service-card:hover{box-shadow:var(--md-elev-2);transform:translateY(-2px)}
+.c-service-card__icon{font-size:2.5rem;margin-block-end:1rem}
+.c-service-card__title{font-size:1.25rem;margin-block-end:.625rem}
+.c-service-card__desc{font-size:.9375rem;color:var(--md-on-surface-var)}
+.c-price{display:inline-block;margin-block-start:1.25rem;font-size:1.5rem;font-family:var(--font-d);color:var(--md-primary)}
+
+/* ── Gallery ── */
+.c-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:1rem;margin-block-start:2rem}
+.c-gallery-item{
+  aspect-ratio:1;border-radius:var(--r-l);overflow:hidden;
+  background:var(--md-surface-high);display:grid;place-items:center;font-size:3rem;
+  box-shadow:var(--md-elev-1);cursor:pointer;
+  transition:transform var(--dur-m) var(--ease-std),box-shadow var(--dur-m) var(--ease-std);
+}
+.c-gallery-item:hover{transform:scale(1.04);box-shadow:var(--md-elev-3)}
+
+/* ── Skills ── */
+.c-skills-section{background:var(--md-surface-low);transition:background var(--dur-m) var(--ease-std)}
+.c-skill-card{background:var(--md-surface-mid);border-radius:var(--r-xl);padding:2rem;box-shadow:var(--md-elev-1);border:1px solid var(--md-outline-variant);transition:box-shadow var(--dur-m) var(--ease-std),background var(--dur-m) var(--ease-std)}
+.c-skill-card:hover{box-shadow:var(--md-elev-2)}
+.c-skill-card__icon{font-size:2.25rem;margin-block-end:1rem}
+.c-skill-card__title{font-size:1.125rem;margin-block-end:.625rem}
+.c-skill-card__desc{font-size:.9375rem;color:var(--md-on-surface-var);margin-block-end:1.25rem}
+.c-chip-list{display:flex;flex-wrap:wrap;gap:.5rem}
+.c-chip{font-size:.8125rem;font-weight:500;padding:.375rem .875rem;border-radius:var(--r-full);border:1.5px solid var(--md-outline-variant);color:var(--md-on-surface-var);background:var(--md-surface);cursor:pointer;transition:background var(--dur-s) var(--ease-std),border-color var(--dur-s) var(--ease-std),color var(--dur-s) var(--ease-std)}
+.c-chip:hover,.c-chip.is-active{background:var(--md-primary-container);border-color:var(--md-primary);color:var(--md-on-primary-container)}
+
+/* ── Principles ── */
+.c-principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-block-start:1.5rem}
+.c-principle{display:flex;align-items:flex-start;gap:.75rem;padding:1rem;border-radius:var(--r-l);background:var(--md-surface-high);transition:background var(--dur-m) var(--ease-std)}
+.c-principle__icon{font-size:1.25rem;flex-shrink:0;margin-block-start:.1rem}
+.c-principle__text strong{display:block;font-size:.9375rem;font-weight:600;margin-block-end:.2rem}
+.c-principle__text span{font-size:.8125rem;color:var(--md-on-surface-var)}
+
+/* ── Contact ── */
+.c-contact-section{background:var(--md-primary);color:var(--md-on-primary);transition:background var(--dur-m) var(--ease-std)}
+.c-contact-section .c-label{color:var(--md-primary-container)}
+.c-contact-section .c-title{color:var(--md-on-primary)}
+.c-contact-section .c-desc{color:color-mix(in srgb,var(--md-on-primary) 75%,transparent);max-width:48ch}
+.c-contact-links{display:flex;flex-wrap:wrap;gap:.75rem;margin-block-start:2rem}
+.c-contact-link{display:inline-flex;align-items:center;gap:.5rem;min-height:48px;padding-inline:1.5rem;border-radius:var(--r-full);font-weight:500;font-size:.9375rem;color:var(--md-primary);background:var(--md-on-primary);border:none;cursor:pointer;font-family:var(--font-b);transition:background var(--dur-s) var(--ease-std),box-shadow var(--dur-s) var(--ease-std)}
+.c-contact-link:hover{background:var(--md-primary-container);box-shadow:var(--md-elev-2);color:var(--md-on-primary-container)}
+.c-contact-link:focus-visible{outline:3px solid var(--md-on-primary);outline-offset:3px}
+
+.c-form{max-width:560px;display:flex;flex-direction:column;gap:1.25rem;margin-block-start:2.5rem}
+.c-field{display:flex;flex-direction:column;gap:.5rem}
+.c-field label{font-size:.9375rem;font-weight:500;color:var(--md-on-surface)}
+.c-field input,.c-field textarea{padding:.875rem 1rem;border-radius:var(--r-l);border:1.5px solid var(--md-outline-variant);background:var(--md-surface-low);color:var(--md-on-surface);font-family:var(--font-b);font-size:1rem;transition:border-color var(--dur-s) var(--ease-std),box-shadow var(--dur-s) var(--ease-std);min-height:48px}
+.c-field input:focus,.c-field textarea:focus{outline:none;border-color:var(--md-primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--md-primary) 20%,transparent)}
+.c-field textarea{resize:vertical;min-height:140px}
+.c-form-msg{display:none;padding:1rem 1.5rem;border-radius:var(--r-l);background:var(--md-primary-container);color:var(--md-on-primary-container);font-weight:500}
+
+/* ── Footer ── */
+.c-footer{padding-block:2rem;text-align:center;font-size:.875rem;color:var(--md-on-surface-var);border-block-start:1px solid var(--md-outline-variant)}
+
+/* ============================================================
+   ITCSS — 7. UTILITIES
+   ============================================================ */
+.u-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Fade-up (sections, cards, headings) */
+.reveal{
+  opacity:0;translate:0 28px;
+  transition:opacity var(--dur-l) var(--ease-dec),translate var(--dur-l) var(--ease-dec);
+}
+.reveal.visible{opacity:1;translate:0 0}
+
+/* Fade-right (contact form elements) */
+.reveal-right{
+  opacity:0;translate:-32px 0;
+  transition:opacity var(--dur-l) var(--ease-dec),translate var(--dur-l) var(--ease-dec);
+}
+.reveal-right.visible{opacity:1;translate:0 0}
+
+/* Stagger delays */
+.reveal-d1,.reveal-right-d1{transition-delay:60ms}
+.reveal-d2,.reveal-right-d2{transition-delay:120ms}
+.reveal-d3,.reveal-right-d3{transition-delay:180ms}
+.reveal-d4,.reveal-right-d4{transition-delay:240ms}
+.reveal-d5,.reveal-right-d5{transition-delay:300ms}
+.reveal-d6,.reveal-right-d6{transition-delay:360ms}
+.reveal-d7,.reveal-right-d7{transition-delay:420ms}
+.reveal-d8,.reveal-right-d8{transition-delay:480ms}
+.reveal-d9,.reveal-right-d9{transition-delay:540ms}
+.reveal-d10,.reveal-right-d10{transition-delay:600ms}
+.reveal-d11,.reveal-right-d11{transition-delay:660ms}
+.reveal-d12,.reveal-right-d12{transition-delay:720ms}
+/* legacy aliases used by JS-built cards */
+.reveal-delay-1{transition-delay:80ms}
+.reveal-delay-2{transition-delay:160ms}
+</style>
+</head>
+<body>
+
+<div id="scrollBar" role="progressbar" aria-hidden="true"></div>
+
+<div class="l-shell" id="shell" data-rail="collapsed" data-rail-modal="false">
+
+  <!-- Rail scrim -->
+  <div class="c-rail-scrim" id="railScrim" aria-hidden="true"></div>
+
+  <!-- ══ NAVIGATION RAIL ══ -->
+  <nav class="c-rail" id="navRail" data-state="collapsed" data-modal="false" aria-label="Main navigation rail">
+    <div class="c-rail__header">
+      <button class="c-rail__menu" id="railMenuBtn" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navRail">
+        <span class="ms" aria-hidden="true">menu</span>
+      </button>
+      <button class="c-rail__fab" id="railFab" aria-label="Contact me — primary action">
+        <span class="ms" aria-hidden="true">mail</span>
+        <span class="c-rail__fab-label" aria-hidden="true">Contact</span>
+      </button>
+    </div>
+    <div class="c-rail__divider" role="separator"></div>
+    <div class="c-rail__nav" role="list">
+      <button class="c-rail__item" data-page="studio" role="listitem" aria-label="Studio" aria-current="page">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">home</span>
+        <span class="c-rail__label">Studio</span>
+      </button>
+      <button class="c-rail__item" data-page="work" role="listitem" aria-label="Work">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">work</span>
+        <span class="c-rail__label">Work</span>
+      </button>
+      <button class="c-rail__item" data-page="services" role="listitem" aria-label="Services">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">design_services</span>
+        <span class="c-rail__label">Services</span>
+      </button>
+      <button class="c-rail__item" data-page="blog" role="listitem" aria-label="Blog">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">article</span>
+        <span class="c-rail__label">Blog</span>
+      </button>
+      <button class="c-rail__item" data-page="stories" role="listitem" aria-label="Stories">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">auto_stories</span>
+        <span class="c-rail__label">Stories</span>
+      </button>
+      <button class="c-rail__item" data-page="gallery" role="listitem" aria-label="Gallery">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">photo_library</span>
+        <span class="c-rail__label">Gallery</span>
+      </button>
+      <button class="c-rail__item" data-page="about" role="listitem" aria-label="About">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">person</span>
+        <span class="c-rail__label">About</span>
+      </button>
+      <button class="c-rail__item" data-page="contact" role="listitem" aria-label="Contact">
+        <div class="c-rail__indicator" aria-hidden="true"></div>
+        <span class="c-rail__icon ms" aria-hidden="true">mail</span>
+        <span class="c-rail__label">Contact</span>
+      </button>
+    </div>
+    <div class="c-rail__footer">
+      <button class="c-icon-btn" id="themeToggle" aria-label="Switch to dark mode" aria-pressed="false">
+        <span class="ms" id="themeIcon" aria-hidden="true">dark_mode</span>
+      </button>
+      <button class="c-icon-btn" id="railModalToggle" aria-label="Switch to modal expanded rail" title="Toggle modal / non-modal">
+        <span class="ms" id="railModalIcon" aria-hidden="true">dock_to_right</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══ TOP APP BAR ══ -->
+  <header role="banner" class="c-topbar" id="topbar">
+    <div class="c-topbar__primary">
+      <button class="c-icon-btn" id="backArrow" style="opacity:0;pointer-events:none" aria-label="Go back">
+        <span class="ms" aria-hidden="true">arrow_back</span>
+      </button>
+      <span class="c-topbar__title" id="topbarTitle">Studio</span>
+      <div class="c-topbar__actions">
+        <button class="c-icon-btn" id="themeToggleBar" aria-label="Switch to dark mode" aria-pressed="false">
+          <span class="ms" id="themeIconBar" aria-hidden="true">dark_mode</span>
+        </button>
+        <button class="c-icon-btn" id="railMenuBtnBar" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span class="ms" aria-hidden="true">menu</span>
+        </button>
+      </div>
+    </div>
+    <nav class="c-topbar__nav" id="topbarNav" aria-label="Top navigation destinations">
+      <button class="c-topbar__item" data-page="studio" aria-label="Studio" aria-current="page">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">home</span></span>
+        <span class="c-topbar__item-label">Studio</span>
+      </button>
+      <button class="c-topbar__item" data-page="work" aria-label="Work">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">work</span></span>
+        <span class="c-topbar__item-label">Work</span>
+      </button>
+      <button class="c-topbar__item" data-page="services" aria-label="Services">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">design_services</span></span>
+        <span class="c-topbar__item-label">Services</span>
+      </button>
+      <button class="c-topbar__item" data-page="blog" aria-label="Blog">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">article</span></span>
+        <span class="c-topbar__item-label">Blog</span>
+      </button>
+      <button class="c-topbar__item" data-page="stories" aria-label="Stories">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">auto_stories</span></span>
+        <span class="c-topbar__item-label">Stories</span>
+      </button>
+      <button class="c-topbar__item" data-page="gallery" aria-label="Gallery">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">photo_library</span></span>
+        <span class="c-topbar__item-label">Gallery</span>
+      </button>
+      <button class="c-topbar__item" data-page="about" aria-label="About">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">person</span></span>
+        <span class="c-topbar__item-label">About</span>
+      </button>
+      <button class="c-topbar__item" data-page="contact" aria-label="Contact">
+        <span class="c-topbar__item-indicator"><span class="ms" aria-hidden="true">mail</span></span>
+        <span class="c-topbar__item-label">Contact</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ══ CONTENT ══ -->
+  <main class="l-content" id="mainContent">
+
+    <!-- STUDIO -->
+    <div id="page-studio" class="page active" role="region" aria-label="Studio">
+      <section class="c-hero" aria-labelledby="hero-title">
+        <div class="o-wrap" style="text-align:center">
+          <span class="c-hero__eyebrow" role="text">Available for work</span>
+          <h1 class="c-hero__title" id="hero-title">Crafting <em>interfaces</em><br>people love to use</h1>
+          <p class="c-hero__sub">Android & Material Design 3 specialist — turning complex systems into calm, accessible, and delightful experiences.</p>
+          <div class="c-hero__actions">
+            <button class="c-btn c-btn--filled" onclick="navigate('work')">View my work</button>
+            <button class="c-btn c-btn--outlined" onclick="navigate('contact')">Get in touch</button>
+          </div>
+        </div>
+        <div class="c-hero__scroll" aria-hidden="true"><div class="c-hero__scroll-line"></div><span>Scroll</span></div>
+      </section>
+      <section class="c-about o-section" aria-labelledby="about-inline-title">
+        <div class="o-wrap">
+          <div class="c-about__grid">
+            <div class="c-about__avatar reveal" aria-hidden="true"><span class="c-about__avatar-inner">🎨</span></div>
+            <div class="reveal reveal-d1">
+              <p class="c-label">About me</p>
+              <h2 class="c-title" id="about-inline-title">Design with intention,<br>build with care</h2>
+              <p style="color:var(--md-on-surface-var);margin-block-end:1rem;font-size:1.0625rem">I'm Alex — an Android & M3 specialist with a deep focus on accessible, token-driven design systems. I believe great design is invisible: it guides, delights, and never gets in the way.</p>
+              <p style="color:var(--md-on-surface-var);font-size:1.0625rem">With expertise spanning dynamic colour, elevation semantics, and responsive typography, I bring M3 to life across mobile and web — always with inclusivity at the core.</p>
+              <div class="c-stats" role="list" aria-label="Key facts">
+                <div class="c-stat" role="listitem"><strong>6+</strong><span>Years Android design</span></div>
+                <div class="c-stat" role="listitem"><strong>40+</strong><span>Products shipped</span></div>
+                <div class="c-stat" role="listitem"><strong>100%</strong><span>Accessibility focused</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="o-section" aria-labelledby="featured-title">
+        <div class="o-wrap">
+          <p class="c-label reveal">Featured work</p>
+          <h2 class="c-title reveal reveal-d1" id="featured-title">Selected projects</h2>
+          <div class="o-grid-2" id="featuredGrid"></div>
+          <div style="margin-block-start:2rem;text-align:center">
+            <button class="c-btn c-btn--outlined reveal" onclick="navigate('work')">View all projects →</button>
+          </div>
+        </div>
+      </section>
+      <footer class="c-footer"><p>© 2026 Alex Ramos — Designed with Material Design 3</p></footer>
+    </div>
+
+    <!-- WORK -->
+    <div id="page-work" class="page" role="region" aria-label="Work">
+      <div class="c-page-hero o-wrap">
+        <p class="c-label reveal">Portfolio</p>
+        <h1 class="c-page-hero__title reveal reveal-d1">All Projects</h1>
+        <p class="c-page-hero__desc reveal reveal-d2">Design systems, Android apps, web platforms — built with M3 and performance in mind.</p>
+      </div>
+      <div class="o-section o-wrap"><div class="o-grid-2" id="workGrid"></div></div>
+      <footer class="c-footer"><p>© 2026 Alex Ramos</p></footer>
+    </div>
+
+    <!-- SERVICES -->
+    <div id="page-services" class="page" role="region" aria-label="Services">
+      <div class="c-page-hero o-wrap">
+        <p class="c-label reveal">What I offer</p>
+        <h1 class="c-page-hero__title reveal reveal-d1">Services</h1>
+        <p class="c-page-hero__desc reveal reveal-d2">Thoughtful, accessible design work from strategy to handoff.</p>
+      </div>
+      <div class="o-section o-wrap"><div class="o-grid-3" id="servicesGrid"></div></div>
+      <footer class="c-footer"><p>© 2026 Alex Ramos</p></footer>
+    </div>
+
+    <!-- BLOG -->
+    <div id="page-blog" class="page" role="region" aria-label="Blog">
+      <div class="c-page-hero o-wrap">
+        <p class="c-label reveal">Writing</p>
+        <h1 class="c-page-hero__title reveal reveal-d1">Blog</h1>
+        <p class="c-page-hero__desc reveal reveal-d2">Deep dives into M3, accessibility, and Android design craft.</p>
+      </div>
+      <div class="o-wrap"><div class="c-post-grid" id="blogGrid"></div></div>
+      <footer class="c-footer" style="margin-block-start:4rem"><p>© 2026 Alex Ramos</p></footer>
+    </div>
+
+    <!-- STORIES -->
+    <div id="page-stories" class="page" role="region" aria-label="Stories">
+      <div class="c-page-hero o-wrap">
+        <p class="c-label reveal">Case studies</p>
+        <h1 class="c-page-hero__title reveal reveal-d1">Stories</h1>
+        <p class="c-page-hero__desc reveal reveal-d2">Behind-the-scenes look at the design decisions that shaped each project.</p>
+      </div>
+      <div class="o-section o-wrap">
+        <div class="c-stories-layout">
+          <div>
+            <h2 class="c-title reveal" style="margin-block-end:1.5rem">Featured Stories</h2>
+            <div class="c-stories-featured" id="storiesFeatured"></div>
+          </div>
+          <div>
+            <h3 class="c-stories-related-title reveal">Related reads</h3>
+            <div class="c-stories-related" id="storiesRelated"></div>
+          </div>
+        </div>
+      </div>
+      <footer class="c-footer"><p>© 2026 Alex Ramos</p></footer>
+    </div>
+
+    <!-- GALLERY -->
+    <div id="page-gallery" class="page" role="region" aria-label="Gallery">
+      <div class="c-page-hero o-wrap">
+        <p class="c-label reveal">Visual work</p>
+        <h1 class="c-page-hero__title reveal reveal-d1">Gallery</h1>
+        <p class="c-page-hero__desc reveal reveal-d2">Explorations, UI studies, and motion experiments.</p>
+      </div>
+      <div class="o-section o-wrap"><div class="c-gallery-grid" id="galleryGrid"></div></div>
+      <footer class="c-footer"><p>© 2026 Alex Ramos</p></footer>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="page-about" class="page" role="region" aria-label="About">
+      <div class="c-page-hero o-wrap">
+        <p class="c-label reveal">Hello</p>
+        <h1 class="c-page-hero__title reveal reveal-d1">About Alex</h1>
+        <p class="c-page-hero__desc reveal reveal-d2">Android & M3 specialist, accessibility advocate, and lifelong learner.</p>
+      </div>
+      <div class="c-skills-section o-section">
+        <div class="o-wrap">
+          <p class="c-label reveal">Expertise</p>
+          <h2 class="c-title reveal reveal-d1">Android Design Skill</h2>
+          <p class="c-desc reveal reveal-d2">Expert knowledge of Material Design 3 for Jetpack Compose and web — enforcing design excellence, accessibility compliance, and performance best practices.</p>
+          <div class="o-grid-3">
+            <div class="c-skill-card reveal">
+              <div class="c-skill-card__icon" aria-hidden="true">🎨</div>
+              <h3 class="c-skill-card__title">M3 Foundation</h3>
+              <p class="c-skill-card__desc">Semantic tokens, dynamic colour for Android 12+, shape scale (4→28dp), and 5-level elevation system.</p>
+              <div class="c-chip-list" role="list">
+                <span class="c-chip" role="listitem">Dynamic Color</span>
+                <span class="c-chip" role="listitem">Semantic Tokens</span>
+                <span class="c-chip" role="listitem">Elevation</span>
+                <span class="c-chip" role="listitem">Shape Scale</span>
+              </div>
+            </div>
+            <div class="c-skill-card reveal reveal-d1">
+              <div class="c-skill-card__icon" aria-hidden="true">♿</div>
+              <h3 class="c-skill-card__title">Accessibility First</h3>
+              <p class="c-skill-card__desc">48×48dp touch targets, 4.5:1 contrast, proper content descriptions, fontScale up to 200%.</p>
+              <div class="c-chip-list" role="list">
+                <span class="c-chip" role="listitem">WCAG AA/AAA</span>
+                <span class="c-chip" role="listitem">TalkBack</span>
+                <span class="c-chip" role="listitem">fontScale</span>
+                <span class="c-chip" role="listitem">Contrast</span>
+              </div>
+            </div>
+            <div class="c-skill-card reveal reveal-d2">
+              <div class="c-skill-card__icon" aria-hidden="true">⚡</div>
+              <h3 class="c-skill-card__title">Performance</h3>
+              <p class="c-skill-card__desc">60fps animations, minimal recomposition, ITCSS architecture for maintainable, scalable CSS.</p>
+              <div class="c-chip-list" role="list">
+                <span class="c-chip" role="listitem">Jetpack Compose</span>
+                <span class="c-chip" role="listitem">ITCSS</span>
+                <span class="c-chip" role="listitem">Recomposition</span>
+                <span class="c-chip" role="listitem">Motion</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-block-start:3rem" class="reveal reveal-d3">
+            <h3 style="font-size:1.25rem;margin-block-end:.5rem">Core Principles</h3>
+            <div class="c-principles">
+              <div class="c-principle"><span class="c-principle__icon" aria-hidden="true">🏗️</span><div class="c-principle__text"><strong>M3 Foundation</strong><span>Semantic tokens, not hardcoded values</span></div></div>
+              <div class="c-principle"><span class="c-principle__icon" aria-hidden="true">🤝</span><div class="c-principle__text"><strong>Accessibility First</strong><span>Inclusive by design, not afterthought</span></div></div>
+              <div class="c-principle"><span class="c-principle__icon" aria-hidden="true">🎭</span><div class="c-principle__text"><strong>Respectful Motion</strong><span>Honours prefers-reduced-motion</span></div></div>
+              <div class="c-principle"><span class="c-principle__icon" aria-hidden="true">🌗</span><div class="c-principle__text"><strong>Dark Mode</strong><span>M3 tonal dark palette, system-aware</span></div></div>
+              <div class="c-principle"><span class="c-principle__icon" aria-hidden="true">📐</span><div class="c-principle__text"><strong>ITCSS Architecture</strong><span>Specificity layers, no conflicts</span></div></div>
+              <div class="c-principle"><span class="c-principle__icon" aria-hidden="true">🔗</span><div class="c-principle__text"><strong>URL State</strong><span>Every view is bookmarkable</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="c-footer"><p>© 2026 Alex Ramos</p></footer>
+    </div>
+
+    <!-- CONTACT -->
+    <div id="page-contact" class="page" role="region" aria-label="Contact">
+      <section class="c-contact-section o-section">
+        <div class="o-wrap">
+          <p class="c-label reveal-right">Let's work together</p>
+          <h1 class="c-title reveal-right reveal-right-d1">Got a project in mind?</h1>
+          <p class="c-desc reveal-right reveal-right-d2">Open to full-time roles, contract work, and design consultancy — especially for Android and design-system projects.</p>
+          <nav class="c-contact-links" aria-label="Contact links">
+            <a href="mailto:alex@example.com" class="c-contact-link reveal-right reveal-right-d3"><span class="ms" aria-hidden="true" style="font-size:18px">mail</span>Email me</a>
+            <a href="https://linkedin.com" class="c-contact-link reveal-right reveal-right-d4" target="_blank" rel="noopener noreferrer"><span class="ms" aria-hidden="true" style="font-size:18px">work</span>LinkedIn</a>
+            <a href="https://dribbble.com" class="c-contact-link reveal-right reveal-right-d5" target="_blank" rel="noopener noreferrer"><span class="ms" aria-hidden="true" style="font-size:18px">sports_basketball</span>Dribbble</a>
+            <a href="#" class="c-contact-link reveal-right reveal-right-d6"><span class="ms" aria-hidden="true" style="font-size:18px">download</span>Download CV</a>
+          </nav>
+          <form class="c-form" onsubmit="handleSubmit(event)" novalidate aria-label="Contact form">
+            <div class="c-field reveal-right reveal-right-d7">
+              <label for="f-name">Name</label>
+              <input type="text" id="f-name" name="name" autocomplete="name" required placeholder="Your name" minlength="2"/>
+            </div>
+            <div class="c-field reveal-right reveal-right-d8">
+              <label for="f-email">Email</label>
+              <input type="email" id="f-email" name="email" autocomplete="email" required placeholder="you@example.com"/>
+            </div>
+            <div class="c-field reveal-right reveal-right-d9">
+              <label for="f-message">Message</label>
+              <textarea id="f-message" name="message" required placeholder="Tell me about your project…" rows="5"></textarea>
+            </div>
+            <div class="reveal-right reveal-right-d10">
+              <button type="submit" class="c-btn c-btn--filled" id="submitBtn" style="background:var(--md-on-primary);color:var(--md-primary)">Send message</button>
+              <div class="c-form-msg" id="formMsg" role="status" aria-live="polite">✅ Message sent! I'll be in touch soon.</div>
+            </div>
+          </form>
+        </div>
+      </section>
+      <footer class="c-footer reveal-right reveal-right-d12" style="border-color:color-mix(in srgb,var(--md-on-primary) 20%,transparent);color:color-mix(in srgb,var(--md-on-primary) 60%,transparent)"><p>© 2026 Alex Ramos</p></footer>
+    </div>
+
+  </main>
+</div><!-- /l-shell -->
+
+<!-- Nav Bar (small screens) -->
+<nav class="c-nav-bar" id="navBar" aria-label="Main navigation">
+  <button class="c-nav-bar__item" data-page="studio" aria-label="Studio" aria-current="page">
+    <div class="c-nav-bar__indicator"><span class="c-nav-bar__icon ms" aria-hidden="true">home</span></div>
+    <span class="c-nav-bar__label">Studio</span>
+  </button>
+  <button class="c-nav-bar__item" data-page="work" aria-label="Work">
+    <div class="c-nav-bar__indicator"><span class="c-nav-bar__icon ms" aria-hidden="true">work</span></div>
+    <span class="c-nav-bar__label">Work</span>
+  </button>
+  <button class="c-nav-bar__item" data-page="services" aria-label="Services">
+    <div class="c-nav-bar__indicator"><span class="c-nav-bar__icon ms" aria-hidden="true">design_services</span></div>
+    <span class="c-nav-bar__label">Services</span>
+  </button>
+  <button class="c-nav-bar__item" data-page="about" aria-label="About">
+    <div class="c-nav-bar__indicator"><span class="c-nav-bar__icon ms" aria-hidden="true">person</span></div>
+    <span class="c-nav-bar__label">About</span>
+  </button>
+  <button class="c-nav-bar__item" data-page="contact" aria-label="Contact">
+    <div class="c-nav-bar__indicator"><span class="c-nav-bar__icon ms" aria-hidden="true">mail</span></div>
+    <span class="c-nav-bar__label">Contact</span>
+  </button>
+</nav>
+
+<script>
+'use strict';
+/* ── Data ─────────────────────────────────────────────────── */
+const PAGES = ['studio','blog','stories','projects','gallery','services','about','contact','work'];
+const PAGE_TITLES = {studio:'Studio',work:'Work',services:'Services',blog:'Blog',stories:'Stories',gallery:'Gallery',about:'About',contact:'Contact'};
+
+const PROJECTS = [
+  {tag:'Design System',title:'Bloom Design System',desc:'Token-driven M3 system — 300+ components, dynamic colour, full a11y docs.',color:'#7D4E2F',icon:'🌸'},
+  {tag:'Android App',title:'Folia – Habit Tracker',desc:'Compose-based habit tracker with adaptive layouts and full TalkBack support.',color:'#A07060',icon:'🌿'},
+  {tag:'Web App',title:'Ember Dashboard',desc:'M3 surface roles and elevation applied to a complex data-dense interface.',color:'#6B5E2F',icon:'📊'},
+  {tag:'Branding',title:'Softline Rebrand',desc:'End-to-end rebrand — new identity, M3 scheme, and refreshed component library.',color:'#8B6555',icon:'✏️'},
+  {tag:'Mobile PWA',title:'TrailSync App',desc:'Offline-first PWA for trail runners. Works at zero signal. 4.9★ store rating.',color:'#7D6030',icon:'🏔️'},
+  {tag:'SaaS',title:'Coda CRM',desc:'Scalable SaaS with drag-and-drop UI, real-time sync, and WCAG AA compliance.',color:'#9B7060',icon:'⚙️'},
+  {tag:'3D / WebGL',title:'Forma Showcase',desc:'Immersive 3D product showcase using Three.js, loaded progressively for 2.3s LCP.',color:'#7D4E5F',icon:'🔮'},
+  {tag:'Accessibility',title:'OpenDoor Gov',desc:'Government portal redesign achieving WCAG AAA. Screen-reader usage up 4× post-launch.',color:'#4E7D5A',icon:'🏛️'},
+  {tag:'E-Commerce',title:'Orbit Shop',desc:'Headless commerce storefront achieving 98/100 Lighthouse with a 45% checkout conversion lift.',color:'#6B4E7D',icon:'🛒'},
+  {tag:'Performance',title:'Meridian Rescue',desc:'Inherited a 23 Lighthouse score. Delivered 100/100 in 6 weeks through deep CWV work.',color:'#7D6B4E',icon:'⚡'},
+  {tag:'Content Site',title:'Lumina Magazine',desc:'Media site with ISR, image CDN, and 2.1s global LCP. Ad revenue up 60% after relaunch.',color:'#7D4E6B',icon:'📰'},
+  {tag:'API + UI',title:'PulseMap',desc:'Live data visualisation tool rendering 500k data points smoothly using WebGL and canvas.',color:'#4E6B7D',icon:'🗺️'},
+];
+
+const BLOG_POSTS = [
+  {icon:'🎨',date:'Mar 2026',title:'Dynamic Color in M3 — beyond tonal palettes',excerpt:'How to use Material Color Utilities to generate adaptive themes from any wallpaper.'},
+  {icon:'♿',date:'Feb 2026',title:'Designing for fontScale up to 200%',excerpt:'Practical Compose patterns that survive aggressive text scaling without breaking layout.'},
+  {icon:'🎭',date:'Jan 2026',title:'Respectful Motion: the prefers-reduced-motion playbook',excerpt:'A systematic approach to building motion systems that degrade gracefully for users who need it.'},
+  {icon:'📐',date:'Dec 2025',title:'ITCSS for design-system CSS',excerpt:'How specificity layering prevents the cascade conflicts that plague large component libraries.'},
+  {icon:'🌗',date:'Nov 2025',title:'Dark mode done right: M3 tonal surfaces',excerpt:'Why tonal elevation in dark themes is more nuanced than simply inverting your light palette.'},
+  {icon:'🔗',date:'Oct 2025',title:'URL state in single-page apps',excerpt:'Making every view bookmarkable, shareable, and back-button-friendly without a router library.'},
+];
+
+const STORIES_FEATURED = [
+  {icon:'🌸',date:'Q1 2026',title:'How we shipped Bloom DS in 12 weeks',excerpt:'The process, tooling, and principles behind a production-ready M3 design system.'},
+  {icon:'📊',date:'Q4 2025',title:'Rescuing a 23 Lighthouse score',excerpt:'Six weeks of deep Core Web Vitals work that pushed a dashboard to 100/100.'},
+  {icon:'🌿',date:'Q3 2025',title:'Building offline-first with Compose',excerpt:'Architecture decisions that made Folia work perfectly at zero signal.'},
+  {icon:'🏛️',date:'Q2 2025',title:'Designing for government accessibility',excerpt:'How OpenDoor went from failing WCAG to achieving AAA compliance in one sprint cycle.'},
+  {icon:'🛒',date:'Q1 2025',title:'Headless commerce at 98 Lighthouse',excerpt:'The rendering strategy, image pipeline, and font decisions that got Orbit Shop to the top.'},
+  {icon:'⚡',date:'Q4 2024',title:'Zero to 100: a performance transformation',excerpt:'What a critical INP audit revealed about Meridian\'s hidden bottlenecks — and how we fixed them.'},
+];
+const STORIES_RELATED = [
+  {icon:'🎭',title:'Motion tokens in practice',meta:'5 min read · Jan 2026'},
+  {icon:'📐',title:'ITCSS in a monorepo',meta:'8 min read · Dec 2025'},
+  {icon:'🌗',title:'Tonal elevation under the hood',meta:'6 min read · Nov 2025'},
+];
+
+const SERVICES = [
+  {icon:'📱',title:'Android Design',desc:'Material Design 3 UI for Jetpack Compose — tokens to production-ready screens.',price:'From €4,000'},
+  {icon:'🏗️',title:'Design Systems',desc:'Token-driven component libraries with full documentation and accessibility audit.',price:'From €8,000'},
+  {icon:'♿',title:'Accessibility Audit',desc:'WCAG AA/AAA review, remediation plan, and developer handoff notes.',price:'From €1,500'},
+  {icon:'🌐',title:'Web Design',desc:'Responsive, performance-first marketing sites and web apps.',price:'From €3,500'},
+  {icon:'🎭',title:'Motion Design',desc:'Micro-interactions and transitions that respect user preferences.',price:'From €2,000'},
+  {icon:'🧑‍🏫',title:'Design Coaching',desc:'1:1 sessions on M3, Compose, accessibility, and career growth.',price:'€200 / hr'},
+];
+
+const GALLERY_ITEMS = [
+  {icon:'🌸',label:'Bloom DS colour tokens'},
+  {icon:'🌿',label:'Folia adaptive layout study'},
+  {icon:'📊',label:'Ember data visualisation'},
+  {icon:'✏️',label:'Softline identity explorations'},
+  {icon:'🎭',label:'Motion timing experiments'},
+  {icon:'🔮',label:'Forma 3D product study'},
+  {icon:'🏛️',label:'OpenDoor accessible forms'},
+  {icon:'⚡',label:'Performance trace diagrams'},
+];
+
+/* ── Rail state ─────────────────────────────────────────────── */
+const rail         = document.getElementById('navRail');
+const shell        = document.getElementById('shell');
+const scrim        = document.getElementById('railScrim');
+const menuBtn      = document.getElementById('railMenuBtn');
+const menuBtnBar   = document.getElementById('railMenuBtnBar');
+const modalBtn     = document.getElementById('railModalToggle');
+const modalIcon    = document.getElementById('railModalIcon');
+const railFab      = document.getElementById('railFab');
+
+let railState = 'collapsed';
+let isModal   = false;
+let wasHidden = false;
+
+function isMobile() { return window.innerWidth <= 719; }
+
+function setRailState(state) {
+  railState = state;
+  // On mobile the rail is always modal (overlays content)
+  const modal = isMobile() ? true : isModal;
+  rail.setAttribute('data-state', state);
+  rail.setAttribute('data-modal', modal);
+  shell.setAttribute('data-rail', state);
+  shell.setAttribute('data-rail-modal', modal);
+  const expanded = state === 'expanded';
+  menuBtn.setAttribute('aria-expanded', expanded);
+  menuBtnBar.setAttribute('aria-expanded', expanded);
+  scrim.classList.toggle('visible', expanded && modal);
+  scrim.setAttribute('aria-hidden', !(expanded && modal));
+  const tb = document.getElementById('topbar');
+  if (isMobile()) {
+    // topbar always full-width on mobile
+    tb.style.insetInlineStart = '0';
+  } else if (state === 'hidden') {
+    tb.style.insetInlineStart = '0';
+  } else if (state === 'collapsed') {
+    tb.style.insetInlineStart = 'var(--rail-w-collapsed)';
+  } else if (expanded && !isModal) {
+    tb.style.insetInlineStart = 'var(--rail-w-expanded)';
+  } else {
+    tb.style.insetInlineStart = 'var(--rail-w-collapsed)';
+  }
+}
+
+function toggleRail() {
+  if (railState === 'hidden') setRailState('expanded');
+  else if (railState === 'collapsed') setRailState('expanded');
+  else setRailState(wasHidden ? 'hidden' : 'collapsed');
+}
+
+modalBtn.addEventListener('click', () => {
+  isModal = !isModal;
+  modalIcon.textContent = isModal ? 'dock_to_right' : 'dock_to_right';
+  modalBtn.setAttribute('aria-label', isModal ? 'Switch to non-modal rail' : 'Switch to modal expanded rail');
+  setRailState(railState);
+});
+menuBtn.addEventListener('click',    toggleRail);
+menuBtnBar.addEventListener('click', toggleRail);
+scrim.addEventListener('click', () => { if (isModal) setRailState(wasHidden ? 'hidden' : 'collapsed'); });
+railFab.addEventListener('click', () => navigate('contact'));
+
+/* ── Router ─────────────────────────────────────────────────── */
+let currentPage = 'studio';
+let navHistory  = ['studio'];
+
+function navigate(id, addToHistory = true) {
+  const norm = id.replace(/-m$/, '');
+  if (!PAGES.includes(norm)) return;
+  const prev = document.getElementById('page-' + currentPage);
+  if (prev) prev.classList.remove('active');
+  if (addToHistory) {
+    navHistory.push(norm);
+    history.pushState({ page: norm }, '', '#' + norm);
+  }
+  currentPage = norm;
+  const next = document.getElementById('page-' + norm);
+  if (next) next.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  updateActiveLinks(norm);
+  updateBackBtn();
+  scheduleReveal();
+  const tt = document.getElementById('topbarTitle');
+  if (tt) tt.textContent = PAGE_TITLES[norm] || norm;
+  if ((isModal || isMobile()) && railState === 'expanded') setRailState('collapsed');
+}
+
+function updateActiveLinks(id) {
+  document.querySelectorAll('.c-rail__item[data-page]').forEach(btn => {
+    const a = btn.getAttribute('data-page') === id;
+    if (a) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
+  });
+  document.querySelectorAll('.c-topbar__item[data-page]').forEach(btn => {
+    const a = btn.getAttribute('data-page') === id;
+    if (a) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
+  });
+  document.querySelectorAll('.c-nav-bar__item[data-page]').forEach(btn => {
+    const a = btn.getAttribute('data-page') === id;
+    if (a) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
+  });
+}
+
+function updateBackBtn() {
+  const btn = document.getElementById('backArrow');
+  if (!btn) return;
+  const show = navHistory.length > 1;
+  btn.style.opacity = show ? '1' : '0';
+  btn.style.pointerEvents = show ? 'auto' : 'none';
+}
+
+function goBack() {
+  if (navHistory.length <= 1) return;
+  navHistory.pop();
+  const prev = navHistory[navHistory.length - 1];
+  navigate(prev, false);
+  history.back();
+}
+document.getElementById('backArrow').addEventListener('click', goBack);
+
+window.addEventListener('popstate', e => {
+  if (e.state?.page) {
+    const el = document.getElementById('page-' + currentPage);
+    if (el) el.classList.remove('active');
+    currentPage = e.state.page;
+    const nxt = document.getElementById('page-' + e.state.page);
+    if (nxt) nxt.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    updateActiveLinks(e.state.page);
+    scheduleReveal();
+  } else {
+    const hash = location.hash.slice(1);
+    if (hash && PAGES.includes(hash)) { navHistory = [hash]; navigate(hash, false); }
+  }
+});
+
+function initFromURL() {
+  const hash = location.hash.slice(1);
+  if (hash && PAGES.includes(hash)) navigate(hash, true);
+  else history.replaceState({ page: 'studio' }, '', '#studio');
+}
+
+/* Rail + nav bar + topbar click delegation */
+rail.addEventListener('click', e => {
+  const item = e.target.closest('.c-rail__item[data-page]');
+  if (item) navigate(item.getAttribute('data-page'));
+});
+document.getElementById('navBar').addEventListener('click', e => {
+  const item = e.target.closest('.c-nav-bar__item[data-page]');
+  if (item) navigate(item.getAttribute('data-page'));
+});
+document.getElementById('topbarNav').addEventListener('click', e => {
+  const item = e.target.closest('.c-topbar__item[data-page]');
+  if (item) navigate(item.getAttribute('data-page'));
+});
+
+/* ── Theme (rail + topbar in sync) ── */
+const root         = document.documentElement;
+const themeBtn     = document.getElementById('themeToggle');
+const themeIcon    = document.getElementById('themeIcon');
+const themeBtnBar  = document.getElementById('themeToggleBar');
+const themeIconBar = document.getElementById('themeIconBar');
+const themeMeta    = document.getElementById('themeMetaColor');
+const mq           = window.matchMedia('(prefers-color-scheme: dark)');
+let isDark = false;
+
+function applyTheme(dark) {
+  isDark = dark;
+  root.setAttribute('data-theme', dark ? 'dark' : 'light');
+  const ico = dark ? 'light_mode' : 'dark_mode';
+  const lbl = dark ? 'Switch to light mode' : 'Switch to dark mode';
+  themeIcon.textContent    = ico;
+  themeIconBar.textContent = ico;
+  themeBtn.setAttribute('aria-label', lbl);    themeBtn.setAttribute('aria-pressed', dark);
+  themeBtnBar.setAttribute('aria-label', lbl); themeBtnBar.setAttribute('aria-pressed', dark);
+  themeMeta.setAttribute('content', dark ? '#1A0F09' : '#FFF8F5');
+  try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch(_) {}
+}
+function getInitialTheme() {
+  try { const s = localStorage.getItem('theme'); if (s) return s === 'dark'; } catch(_) {}
+  return mq.matches;
+}
+applyTheme(getInitialTheme());
+mq.addEventListener('change', e => {
+  try { if (!localStorage.getItem('theme')) applyTheme(e.matches); } catch(_) { applyTheme(e.matches); }
+});
+themeBtn.addEventListener('click',    () => applyTheme(!isDark));
+themeBtnBar.addEventListener('click', () => applyTheme(!isDark));
+
+/* ── Scroll ── */
+const progressEl  = document.getElementById('scrollBar');
+const topbarEl    = document.getElementById('topbar');
+let   lastScrollY = 0;
+
+window.addEventListener('scroll', () => {
+  const y  = window.scrollY;
+  const pg = document.getElementById('page-' + currentPage);
+  const h  = pg ? pg.scrollHeight - window.innerHeight : 0;
+  progressEl.style.width = (h > 0 ? (y / h * 100) : 0) + '%';
+  topbarEl.classList.toggle('is-scrolled', y > 8);
+  topbarEl.classList.toggle('is-compact', y > 80 && y > lastScrollY);
+  lastScrollY = y;
+}, { passive: true });
+
+/* ── Reveal (IntersectionObserver — covers both .reveal and .reveal-right) ── */
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let revealObs;
+
+function scheduleReveal() {
+  requestAnimationFrame(() => {
+    if (revealObs) revealObs.disconnect();
+    const els = document.querySelectorAll(
+      '#page-' + currentPage + ' .reveal, #page-' + currentPage + ' .reveal-right'
+    );
+    if (prefersReduced) { els.forEach(el => el.classList.add('visible')); return; }
+    revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+    els.forEach(el => revealObs.observe(el));
+  });
+}
+
+/* ── Resize: re-apply state so rail/topbar offsets stay correct ── */
+window.addEventListener('resize', () => {
+  setRailState(railState);
+}, { passive: true });
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('formMsg');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  setTimeout(() => { btn.style.display = 'none'; msg.style.display = 'block'; e.target.reset(); }, 800);
+}
+
+/* ── Build content ── */
+function delayClass(i, total) {
+  const d = Math.round((i / total) * 6);
+  return d > 0 ? ` reveal-d${d}` : '';
+}
+
+function buildCard(p, i, total, onclick) {
+  const el = document.createElement('article');
+  el.className = 'c-card reveal' + delayClass(i, total);
+  el.setAttribute('tabindex','0'); el.setAttribute('role','button'); el.setAttribute('aria-label', p.title);
+  el.innerHTML = `<div class="c-card__thumb" style="background:color-mix(in srgb,${p.color||'var(--md-primary)'} 18%,var(--md-surface-high))">
+    <span aria-hidden="true">${p.icon}</span></div>
+    <div class="c-card__body"><div class="c-card__tags"><span class="c-card__tag">${p.tag}</span></div>
+    <h3 class="c-card__title">${p.title}</h3><p class="c-card__desc">${p.desc}</p></div>`;
+  if (onclick) {
+    el.addEventListener('click', onclick);
+    el.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();onclick();} });
+  }
+  return el;
+}
+
+function buildFeatured() {
+  const g = document.getElementById('featuredGrid'); if (!g) return;
+  const f = document.createDocumentFragment();
+  const items = PROJECTS.slice(0,4);
+  items.forEach((p,i) => f.appendChild(buildCard(p, i, items.length, () => navigate('work'))));
+  g.appendChild(f);
+}
+
+function buildWork() {
+  const g = document.getElementById('workGrid'); if (!g || g.children.length) return;
+  const f = document.createDocumentFragment();
+  PROJECTS.forEach((p,i) => f.appendChild(buildCard(p, i, PROJECTS.length, () => navigate('contact'))));
+  g.appendChild(f);
+}
+
+function buildBlog() {
+  const g = document.getElementById('blogGrid'); if (!g || g.children.length) return;
+  const f = document.createDocumentFragment();
+  BLOG_POSTS.forEach((p, i) => {
+    const el = document.createElement('article');
+    el.className = 'c-post-card reveal' + delayClass(i, BLOG_POSTS.length);
+    el.setAttribute('tabindex','0');
+    el.innerHTML = `<div class="c-post-card__header"><span aria-hidden="true">${p.icon}</span></div>
+      <div class="c-post-card__body"><p class="c-post-card__meta">${p.date}</p>
+      <h3 class="c-post-card__title">${p.title}</h3><p class="c-post-card__excerpt">${p.excerpt}</p></div>`;
+    f.appendChild(el);
+  });
+  g.appendChild(f);
+}
+
+function buildStories() {
+  const gf = document.getElementById('storiesFeatured');
+  const gr = document.getElementById('storiesRelated');
+  if (!gf || gf.children.length) return;
+  const ff = document.createDocumentFragment();
+  STORIES_FEATURED.forEach((p, i) => {
+    const el = document.createElement('article');
+    el.className = 'c-post-card reveal' + delayClass(i, STORIES_FEATURED.length);
+    el.setAttribute('tabindex','0');
+    el.innerHTML = `<div class="c-post-card__header"><span aria-hidden="true">${p.icon}</span></div>
+      <div class="c-post-card__body"><p class="c-post-card__meta">${p.date}</p>
+      <h3 class="c-post-card__title">${p.title}</h3><p class="c-post-card__excerpt">${p.excerpt}</p></div>`;
+    ff.appendChild(el);
+  });
+  gf.appendChild(ff);
+  const fr = document.createDocumentFragment();
+  STORIES_RELATED.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'c-story-related-card reveal reveal-d' + (i + 1);
+    el.setAttribute('tabindex','0');
+    el.innerHTML = `<span class="c-story-related-card__icon" aria-hidden="true">${p.icon}</span>
+      <div><p class="c-story-related-card__title">${p.title}</p>
+      <p class="c-story-related-card__meta">${p.meta}</p></div>`;
+    fr.appendChild(el);
+  });
+  gr.appendChild(fr);
+}
+
+function buildServices() {
+  const g = document.getElementById('servicesGrid'); if (!g || g.children.length) return;
+  const f = document.createDocumentFragment();
+  SERVICES.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'c-service-card reveal' + delayClass(i, SERVICES.length);
+    el.innerHTML = `<div class="c-service-card__icon" aria-hidden="true">${s.icon}</div>
+      <h3 class="c-service-card__title">${s.title}</h3>
+      <p class="c-service-card__desc">${s.desc}</p>
+      <span class="c-price">${s.price}</span>`;
+    f.appendChild(el);
+  });
+  g.appendChild(f);
+}
+
+function buildGallery() {
+  const g = document.getElementById('galleryGrid'); if (!g || g.children.length) return;
+  const f = document.createDocumentFragment();
+  GALLERY_ITEMS.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'c-gallery-item reveal' + delayClass(i, GALLERY_ITEMS.length);
+    el.setAttribute('tabindex','0'); el.setAttribute('role','img');
+    el.setAttribute('aria-label', item.label);
+    el.innerHTML = `<span aria-hidden="true">${item.icon}</span>`;
+    f.appendChild(el);
+  });
+  g.appendChild(f);
+}
+
+/* ── Chips ── */
+document.addEventListener('click', e => {
+  const chip = e.target.closest('.c-chip');
+  if (!chip) return;
+  chip.classList.toggle('is-active');
+  chip.setAttribute('aria-pressed', chip.classList.contains('is-active'));
+});
+
+/* ── Service Worker ── */
+let swDone = false;
+function registerSW() {
+  if (swDone || !('serviceWorker' in navigator)) return;
+  swDone = true;
+  const sw = `const C='alex-v1',A=['/'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A)));self.skipWaiting();});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim();});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
+  const url = URL.createObjectURL(new Blob([sw],{type:'application/javascript'}));
+  navigator.serviceWorker.register(url,{scope:'/'}).catch(()=>{});
+}
+
+/* ── Init ── */
+function init() {
+  buildFeatured(); buildWork(); buildBlog(); buildStories(); buildServices(); buildGallery();
+  document.querySelectorAll('.c-chip').forEach(c => {
+    c.setAttribute('role','button'); c.setAttribute('tabindex','0'); c.setAttribute('aria-pressed','false');
+    c.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();c.click();} });
+  });
+  initFromURL(); scheduleReveal(); updateActiveLinks(currentPage); updateBackBtn();
+  setRailState('collapsed'); registerSW();
+}
+
+if (typeof scheduler !== 'undefined' && scheduler.postTask) {
+  scheduler.postTask(init, { priority: 'background' });
+} else {
+  requestAnimationFrame(() => setTimeout(init, 0));
+}
+</script>
+</body>
+</html>

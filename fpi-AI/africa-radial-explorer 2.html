@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Africa Radial Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #F7F2F9; color: #1C1B1F; margin: 0;
+      height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
+    }
+    #app-shell { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+
+    /* ── Side nav ─────────────────────────────────────── */
+    #side-nav {
+      width: 80px; flex-shrink: 0; display: flex; flex-direction: column;
+      align-items: center; padding: 20px 0; gap: 6px;
+      background: #F3EDF7; border-right: 1px solid #CAC4D0; z-index: 10;
+    }
+
+    /* ── Bottom nav ───────────────────────────────────── */
+    #bottom-nav {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 62px;
+      background: #F3EDF7; border-top: 1px solid #CAC4D0; z-index: 50;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    @media (max-width: 767px) {
+      #side-nav            { display: none; }
+      #bottom-nav          { display: flex; }
+      body                 { padding-bottom: 62px; }
+      #details-panel {
+        top: auto !important; bottom: 62px !important;
+        left: 0 !important; right: 0 !important; width: 100% !important;
+        max-height: 75dvh; border-radius: 24px 24px 0 0;
+        border-left: none !important; border-top: 1px solid #CAC4D0;
+        transform: translateY(105%) !important;
+      }
+      #details-panel.open  { transform: translateY(0) !important; }
+      #header-actions      { display: none; }
+      #app-bar h1          { font-size: 15px; }
+    }
+
+    .nav-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; padding: 8px 14px; border-radius: 14px; border: none;
+      background: transparent; cursor: pointer; color: #49454F;
+      font-size: 10px; font-family: 'Roboto', sans-serif; transition: background .18s, color .18s;
+    }
+    .nav-btn.active       { background: #E8DEF8; color: #1D192B; }
+    .nav-btn:not(.active):hover { background: #EDE7F6; }
+    #bottom-nav .nav-btn  { flex: 1; border-radius: 12px; margin: 5px 3px; }
+
+    /* ── Tooltip ──────────────────────────────────────── */
+    #tooltip {
+      position: fixed; visibility: hidden; pointer-events: none;
+      background: #2B2930; color: #F4EFF4; padding: 10px 14px;
+      border-radius: 12px; font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,.35);
+      z-index: 300; max-width: 220px;
+    }
+
+    /* ── SVG ──────────────────────────────────────────── */
+    .link { fill: none; stroke: #CAC4D0; stroke-opacity: .45; stroke-width: 1.5px; }
+    .link.dimmed { stroke-opacity: .07; }
+    .node circle { transition: transform .2s cubic-bezier(0.34,1.56,0.64,1); cursor: pointer; }
+    .node:hover circle { transform: scale(1.45); }
+    .node.dimmed { opacity: .1; }
+    .node.dimmed text { pointer-events: none; }
+
+    /* ── Search ───────────────────────────────────────── */
+    .search-wrap { background: #ECE6F0; border-radius: 28px; transition: background .2s, box-shadow .2s; }
+    .search-wrap:focus-within { background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
+
+    /* ── Side panel ───────────────────────────────────── */
+    #details-panel {
+      position: fixed; right: 0; top: 64px; bottom: 0; width: 390px;
+      background: #FEF7FF; border-left: 1px solid #CAC4D0;
+      box-shadow: -4px 0 28px rgba(0,0,0,.10); z-index: 40;
+      display: flex; flex-direction: column;
+      will-change: transform;
+      transition: transform .4s cubic-bezier(0.05,0.7,0.1,1);
+      transform: translateX(110%);
+    }
+    #details-panel.open { transform: translateX(0); }
+
+    .drag-handle { display:none; width:36px; height:4px; background:#CAC4D0; border-radius:2px; margin:10px auto 0; }
+    @media(max-width:767px){ .drag-handle { display:block; } }
+
+    /* ── Tabs ─────────────────────────────────────────── */
+    .tab-bar { display:flex; border-bottom:1px solid #EDE7F6; padding: 0 16px; flex-shrink:0; }
+    .tab-btn {
+      flex:1; padding:10px 2px; font-size:11px; font-weight:500;
+      border:none; background:transparent; cursor:pointer; color:#79747E;
+      border-bottom:2px solid transparent; transition:color .2s, border-color .2s;
+    }
+    .tab-btn.active { color:#6750A4; border-bottom-color:#6750A4; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* ── Panel scroll ─────────────────────────────────── */
+    .panel-scroll {
+      flex:1; overflow-y:auto; padding:0 18px 16px;
+      -webkit-overflow-scrolling:touch;
+    }
+    .panel-scroll::-webkit-scrollbar { width:4px; }
+    .panel-scroll::-webkit-scrollbar-thumb { background:#CAC4D0; border-radius:4px; }
+
+    /* ── Stat cards ───────────────────────────────────── */
+    .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+    .stat-card { background:#F3EDF7; border-radius:14px; padding:10px 13px; }
+    .stat-card .lbl { font-size:9px; text-transform:uppercase; letter-spacing:.06em; color:#79747E; margin-bottom:3px; }
+    .stat-card .val { font-size:13px; font-weight:600; color:#1C1B1F; line-height:1.3; }
+    .stat-card .sub { font-size:9px; color:#79747E; margin-top:2px; }
+
+    /* ── Info rows ────────────────────────────────────── */
+    .info-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #F3EDF7; font-size:12px; }
+    .info-row:last-child { border-bottom:none; }
+    .info-row .k { color:#79747E; }
+    .info-row .v { color:#1C1B1F; font-weight:500; text-align:right; max-width:58%; }
+
+    /* ── Pop bar ──────────────────────────────────────── */
+    .pop-bar { display:flex; height:7px; border-radius:4px; overflow:hidden; margin:6px 0 10px; }
+    .pop-seg { transition:width .5s ease; }
+
+    /* ── Climate badge ────────────────────────────────── */
+    .climate-badge {
+      display:inline-flex; align-items:center; gap:4px;
+      background:#E8F5E9; color:#2E7D32; padding:4px 10px;
+      border-radius:20px; font-size:11px; font-weight:500;
+    }
+
+    /* ── Chips ────────────────────────────────────────── */
+    .chip { background:#E8DEF8; color:#1D192B; padding:3px 9px; border-radius:8px; font-size:10px; font-weight:500; }
+    .source-chip { background:#EDE7F6; color:#4A148C; padding:2px 7px; border-radius:8px; font-size:9px; font-weight:600; letter-spacing:.04em; }
+
+    .sec-title { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:#79747E; margin-bottom:7px; }
+
+    /* ── Skeleton ─────────────────────────────────────── */
+    @keyframes shimmer { 0%{background-position:-600px 0} 100%{background-position:600px 0} }
+    .skel { background:linear-gradient(90deg,#e8def8 25%,#f3edf7 50%,#e8def8 75%); background-size:1200px 100%; animation:shimmer 1.4s infinite; border-radius:6px; }
+
+    /* ── Spinner ──────────────────────────────────────── */
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spinner { width:44px; height:44px; border:4px solid #E8DEF8; border-top-color:#6750A4; border-radius:50%; animation:spin .8s linear infinite; }
+
+    /* ── Wikipedia excerpt ────────────────────────────── */
+    #wiki-summary { min-height:60px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ APP BAR ═══════════════════════════════════════════════════════════════ -->
+<header id="app-bar" style="z-index:20;position:relative;"
+  class="h-16 flex items-center px-4 md:px-6 bg-[#F7F2F9] justify-between border-b border-[#CAC4D0]/30 gap-3 shrink-0">
+  <div class="flex items-center gap-2 shrink-0">
+    <span class="material-symbols-outlined text-[#49454F]" aria-hidden="true">map</span>
+    <h1 class="text-base md:text-xl font-medium whitespace-nowrap">Africa Explorer</h1>
+  </div>
+  <div class="search-wrap flex items-center px-3 py-1.5 flex-1 max-w-xs md:max-w-md">
+    <span class="material-symbols-outlined text-[#49454F] text-base mr-2 shrink-0" aria-hidden="true">search</span>
+    <input type="search" id="node-search" placeholder="Search country or capital…"
+           class="bg-transparent border-none outline-none w-full text-sm text-[#1C1B1F] placeholder-[#49454F]"
+           aria-label="Search country or capital" autocomplete="off"/>
+    <button id="search-clear" class="hidden text-[#49454F] hover:text-[#1C1B1F]" aria-label="Clear search">
+      <span class="material-symbols-outlined text-base">close</span>
+    </button>
+  </div>
+  <div id="header-actions" class="flex gap-2 shrink-0">
+    <button class="px-4 py-1.5 rounded-full border border-[#79747E] text-[#6750A4] text-sm font-medium hover:bg-[#6750A4]/5 active:scale-95 transition-all">Export</button>
+    <button class="px-4 py-1.5 rounded-full bg-[#6750A4] text-white text-sm font-medium hover:shadow-md active:scale-95 transition-all">Analytics</button>
+  </div>
+</header>
+
+<!-- ═══ APP SHELL ═════════════════════════════════════════════════════════════ -->
+<div id="app-shell">
+
+  <!-- Side nav (desktop only) -->
+  <nav id="side-nav" aria-label="Main navigation">
+    <button class="nav-btn active" data-nav="map" aria-label="Map" aria-current="page">
+      <span class="material-symbols-outlined">hub</span>
+    </button>
+    <button class="nav-btn" data-nav="globe" aria-label="Regions">
+      <span class="material-symbols-outlined">public</span>
+    </button>
+    <button class="nav-btn" data-nav="analytics" aria-label="Analytics">
+      <span class="material-symbols-outlined">bar_chart</span>
+    </button>
+    <button class="nav-btn" data-nav="settings" aria-label="Settings">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
+  </nav>
+
+  <!-- Chart workspace -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <main class="flex-1 relative bg-white m-2 md:m-4 rounded-[20px] md:rounded-[28px] border border-[#CAC4D0]/50 shadow-inner overflow-hidden">
+      <div id="loading" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 z-10 gap-4" aria-live="polite">
+        <div class="spinner"></div>
+        <p class="text-sm text-[#49454F]">Fetching live data…</p>
+      </div>
+      <div id="error-banner" class="hidden absolute top-3 left-1/2 -translate-x-1/2 bg-[#B3261E] text-white px-5 py-2.5 rounded-2xl text-sm shadow-lg z-20 flex items-center gap-2" role="alert">
+        <span class="material-symbols-outlined text-base">error</span>
+        <span id="error-msg">Could not load live data. Using offline data.</span>
+        <button onclick="document.getElementById('error-banner').classList.add('hidden')" class="ml-2 underline text-white/80">Dismiss</button>
+      </div>
+      <svg id="radial-tree" class="w-full h-full" aria-label="Africa radial map" role="img"></svg>
+      <button onclick="resetZoom()" aria-label="Reset view"
+              class="absolute bottom-4 right-4 md:bottom-6 md:right-6 h-12 w-12 bg-[#D3E3FD] text-[#041E49] rounded-2xl shadow-lg flex items-center justify-center hover:scale-105 active:scale-90 transition-all">
+        <span class="material-symbols-outlined">zoom_in_map</span>
+      </button>
+    </main>
+  </div>
+</div>
+
+<!-- Bottom nav (mobile only) -->
+<nav id="bottom-nav" aria-label="Main navigation">
+  <button class="nav-btn active" data-nav="map" aria-label="Map" aria-current="page">
+    <span class="material-symbols-outlined" style="font-size:22px">hub</span>
+    <span>Map</span>
+  </button>
+  <button class="nav-btn" data-nav="globe" aria-label="Regions">
+    <span class="material-symbols-outlined" style="font-size:22px">public</span>
+    <span>Regions</span>
+  </button>
+  <button class="nav-btn" data-nav="analytics" aria-label="Analytics">
+    <span class="material-symbols-outlined" style="font-size:22px">bar_chart</span>
+    <span>Stats</span>
+  </button>
+  <button class="nav-btn" data-nav="settings" aria-label="Settings">
+    <span class="material-symbols-outlined" style="font-size:22px">settings</span>
+    <span>Settings</span>
+  </button>
+</nav>
+
+<!-- Tooltip -->
+<div id="tooltip" role="tooltip"></div>
+
+<!-- ═══ DETAILS PANEL ════════════════════════════════════════════════════════ -->
+<aside id="details-panel" aria-label="Country details" aria-hidden="true">
+  <div class="drag-handle"></div>
+
+  <!-- Panel header -->
+  <div class="flex items-center justify-between px-5 pt-4 pb-3 shrink-0 border-b border-[#EDE7F6] gap-3">
+    <img id="panel-flag" src="" alt="" width="54" height="35"
+         class="rounded shadow border border-[#CAC4D0]/30 bg-[#ECE6F0] shrink-0 object-cover"/>
+    <div class="flex-1 min-w-0">
+      <h2 id="panel-title" class="text-lg font-semibold text-[#1C1B1F] leading-tight truncate">Country</h2>
+      <p id="panel-subtitle" class="text-xs text-[#6750A4] font-medium">Region</p>
+    </div>
+    <button onclick="closePanel()" class="p-1.5 hover:bg-[#E8DEF8] rounded-full shrink-0" aria-label="Close panel">
+      <span class="material-symbols-outlined" style="font-size:20px">close</span>
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="economy">Economy</button>
+    <button class="tab-btn" data-tab="people">People</button>
+    <button class="tab-btn" data-tab="climate">Climate</button>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="panel-scroll">
+
+    <!-- ── OVERVIEW ──────────────────────────────────── -->
+    <div id="tab-overview" class="tab-panel active pt-4 space-y-4">
+
+      <!-- Wikipedia excerpt -->
+      <div>
+        <div class="sec-title">Wikipedia Summary</div>
+        <p id="wiki-summary" class="text-xs text-[#49454F] leading-relaxed skel" style="min-height:60px"></p>
+      </div>
+
+      <!-- Key facts grid -->
+      <div class="stat-grid">
+        <div class="stat-card"><div class="lbl">Capital</div><div class="val" id="ov-capital">—</div></div>
+        <div class="stat-card"><div class="lbl">Independence</div><div class="val" id="ov-indep">—</div></div>
+        <div class="stat-card"><div class="lbl">Colonial Power</div><div class="val" id="ov-colonial">—</div></div>
+        <div class="stat-card"><div class="lbl">Government</div><div class="val" id="ov-gov">—</div></div>
+        <div class="stat-card"><div class="lbl">Official Language(s)</div><div class="val" id="ov-lang">—</div></div>
+        <div class="stat-card"><div class="lbl">Area</div><div class="val" id="ov-area">—</div></div>
+      </div>
+
+      <!-- Religion -->
+      <div>
+        <div class="sec-title">Religion</div>
+        <p id="ov-religion" class="text-xs text-[#1C1B1F]">—</p>
+      </div>
+
+      <!-- Politics -->
+      <div>
+        <div class="sec-title">Political Situation</div>
+        <p id="ov-politics" class="text-xs text-[#49454F] leading-relaxed">—</p>
+      </div>
+
+      <!-- Regional blocs -->
+      <div>
+        <div class="sec-title">Regional Memberships</div>
+        <div id="ov-blocs" class="flex flex-wrap gap-1.5">—</div>
+      </div>
+
+      <!-- Sources -->
+      <div class="flex flex-wrap gap-1 pt-1">
+        <span class="source-chip">Wikipedia</span>
+        <span class="source-chip">CIA Factbook</span>
+        <span class="source-chip">REST Countries</span>
+        <span class="source-chip">AU</span>
+      </div>
+    </div>
+
+    <!-- ── ECONOMY ────────────────────────────────────── -->
+    <div id="tab-economy" class="tab-panel pt-4 space-y-4">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="lbl">GDP (Nominal)</div><div class="val" id="ec-gdp">—</div><div class="sub">World Bank / IMF</div></div>
+        <div class="stat-card"><div class="lbl">GDP per Capita</div><div class="val" id="ec-gdppc">—</div><div class="sub">World Bank 2024</div></div>
+        <div class="stat-card"><div class="lbl">GDP Growth</div><div class="val" id="ec-growth">—</div><div class="sub">IMF WEO 2024</div></div>
+        <div class="stat-card"><div class="lbl">Inflation Rate</div><div class="val" id="ec-inflation">—</div><div class="sub">IMF WEO 2024</div></div>
+        <div class="stat-card"><div class="lbl">Unemployment</div><div class="val" id="ec-unemploy">—</div><div class="sub">ILO estimate</div></div>
+        <div class="stat-card"><div class="lbl">Currency</div><div class="val" id="ec-currency">—</div></div>
+      </div>
+      <div>
+        <div class="sec-title">Economic Profile</div>
+        <p id="ec-desc" class="text-xs text-[#49454F] leading-relaxed">—</p>
+      </div>
+      <div>
+        <div class="sec-title">Major Exports</div>
+        <div id="ec-exports" class="flex flex-wrap gap-1.5"></div>
+      </div>
+      <div class="flex flex-wrap gap-1 pt-1">
+        <span class="source-chip">World Bank</span>
+        <span class="source-chip">IMF WEO</span>
+        <span class="source-chip">UN Comtrade</span>
+        <span class="source-chip">AfDB</span>
+        <span class="source-chip">UNCTAD</span>
+      </div>
+    </div>
+
+    <!-- ── PEOPLE ─────────────────────────────────────── -->
+    <div id="tab-people" class="tab-panel pt-4 space-y-4">
+
+      <div class="stat-card" style="background:#EDE7F6;">
+        <div class="lbl">Total Population</div>
+        <div class="val text-base" id="pe-total">—</div>
+        <div class="sub">UN 2024 estimate</div>
+      </div>
+
+      <!-- Pop breakdown bar -->
+      <div>
+        <div class="sec-title">Population Breakdown</div>
+        <div class="pop-bar" id="pop-bar">
+          <div class="pop-seg" id="pb-men"   style="background:#1565C0;width:0%"></div>
+          <div class="pop-seg" id="pb-women" style="background:#AD1457;width:0%"></div>
+          <div class="pop-seg" id="pb-teens" style="background:#E65100;width:0%"></div>
+          <div class="pop-seg" id="pb-child" style="background:#2E7D32;width:0%"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5 text-xs">
+          <div class="flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:2px;background:#1565C0;display:inline-block;flex-shrink:0"></span>Men<span class="ml-auto font-medium" id="pe-men">—</span></div>
+          <div class="flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:2px;background:#AD1457;display:inline-block;flex-shrink:0"></span>Women<span class="ml-auto font-medium" id="pe-women">—</span></div>
+          <div class="flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:2px;background:#E65100;display:inline-block;flex-shrink:0"></span>Teens 13–17<span class="ml-auto font-medium" id="pe-teens">—</span></div>
+          <div class="flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:2px;background:#2E7D32;display:inline-block;flex-shrink:0"></span>Children 0–12<span class="ml-auto font-medium" id="pe-child">—</span></div>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="lbl">Median Age</div><div class="val" id="pe-medage">—</div></div>
+        <div class="stat-card"><div class="lbl">Life Expectancy</div><div class="val" id="pe-lifeexp">—</div></div>
+        <div class="stat-card"><div class="lbl">Fertility Rate</div><div class="val" id="pe-fertility">—</div></div>
+        <div class="stat-card"><div class="lbl">Urban Population</div><div class="val" id="pe-urban">—</div></div>
+        <div class="stat-card"><div class="lbl">Literacy Rate</div><div class="val" id="pe-literacy">—</div></div>
+        <div class="stat-card"><div class="lbl">HDI (UNDP)</div><div class="val" id="pe-hdi">—</div></div>
+      </div>
+
+      <div class="flex flex-wrap gap-1 pt-1">
+        <span class="source-chip">UN Pop. Div.</span>
+        <span class="source-chip">UNDP HDR</span>
+        <span class="source-chip">World Bank</span>
+        <span class="source-chip">WHO</span>
+        <span class="source-chip">UNESCO</span>
+      </div>
+    </div>
+
+    <!-- ── CLIMATE ─────────────────────────────────────── -->
+    <div id="tab-climate" class="tab-panel pt-4 space-y-4">
+      <div>
+        <div class="sec-title">Climate Zone(s)</div>
+        <div id="cl-zones" class="flex flex-wrap gap-2"></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="lbl">Avg. Temperature</div><div class="val" id="cl-temp">—</div></div>
+        <div class="stat-card"><div class="lbl">Annual Rainfall</div><div class="val" id="cl-rain">—</div></div>
+        <div class="stat-card"><div class="lbl">Hottest Period</div><div class="val" id="cl-hot">—</div></div>
+        <div class="stat-card"><div class="lbl">Rainy Season</div><div class="val" id="cl-rainy">—</div></div>
+      </div>
+      <div>
+        <div class="sec-title">Climate Description</div>
+        <p id="cl-desc" class="text-xs text-[#49454F] leading-relaxed">—</p>
+      </div>
+      <div>
+        <div class="sec-title">Environmental Risks</div>
+        <div id="cl-risks" class="flex flex-wrap gap-1.5"></div>
+      </div>
+      <div class="flex flex-wrap gap-1 pt-1">
+        <span class="source-chip">World Bank Climate</span>
+        <span class="source-chip">IPCC AR6</span>
+        <span class="source-chip">NOAA</span>
+        <span class="source-chip">UNEP</span>
+      </div>
+    </div>
+
+  </div><!-- /panel-scroll -->
+
+  <!-- Panel footer -->
+  <div class="px-5 pb-5 pt-3 shrink-0 border-t border-[#EDE7F6]">
+    <button onclick="openWiki()"
+            class="w-full py-3 bg-[#6750A4] text-white rounded-full font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 text-sm">
+      <span class="material-symbols-outlined text-base">open_in_new</span>
+      Open Wikipedia Article
+    </button>
+  </div>
+</aside>
+
+<!-- ═══ SCRIPT ════════════════════════════════════════════════════════════════ -->
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let svgEl, gEl, zoomBehavior, nodesEl, linksEl;
+let currentWidth = 0, currentHeight = 0, resizeTimer = null;
+let currentWikiSlug = "";
+
+// ── Enrichment database ───────────────────────────────────────────────────────
+// Sources: Wikipedia, CIA World Factbook, UN, World Bank, IMF WEO 2024, AfDB, IPCC
+const DB = {
+  "Algeria":      {indep:"1962",colonial:"France",lang:"Arabic, Tamazight",gov:"Presidential Republic",religion:"Islam (Sunni) 99%",politics:"President Tebboune re-elected 2024. Dominant single-party system (FLN). Civil society constrained since 2019 Hirak protests. Strategic OPEC+ member.",gdp:"$239B",gdppc:"$5,350",growth:"3.8%",inflation:"7.2%",unemploy:"12.5%",currency:"Algerian Dinar (DZD)",exports:["Petroleum","Natural Gas","Petrochemicals","Dates"],blocs:["AU","Arab League","OPEC+","OIC"],medage:"28.9",lifeexp:"77.1 yrs",fertility:"2.87",urban:"75%",literacy:"81%",hdi:"0.745",climate:["Desert","Mediterranean"],temp:"22°C avg",rain:"100–900mm",hot:"July–Aug",rainy:"Nov–Mar (north)",climdesc:"Vast Sahara dominates the south (90% of land). Mediterranean coast has mild wet winters and hot dry summers. Highest dunes reach 180m in the Grand Erg Occidental.",risks:["Desertification","Drought","Flash floods","Wildfires"],econdesc:"Oil and gas account for ~94% of export revenues and 60% of budget. Algeria is pursuing economic diversification through tourism, mining, and renewable energy investment.",wiki:"Algeria"},
+  "Egypt":        {indep:"1922",colonial:"United Kingdom",lang:"Arabic",gov:"Presidential Republic",religion:"Islam (Sunni) 90%, Coptic Christianity 10%",politics:"President el-Sisi governs with sweeping authority since 2014. 2023 elections held. Opposition tightly constrained. Suez Canal gives Egypt major geopolitical leverage.",gdp:"$396B",gdppc:"$3,620",growth:"3.3%",inflation:"29.8%",unemploy:"7.3%",currency:"Egyptian Pound (EGP)",exports:["Petroleum","Natural Gas","Textiles","Gold","Agricultural products"],blocs:["AU","Arab League","D-8","OIC"],medage:"24.6",lifeexp:"72.0 yrs",fertility:"3.27",urban:"43%",literacy:"73%",hdi:"0.731",climate:["Desert","Semi-arid (delta)"],temp:"22°C avg",rain:"<25mm (S), 200mm (N)",hot:"June–Aug",rainy:"Nov–Mar (Nile Delta)",climdesc:"Hyper-arid Sahara covers most of Egypt. The Nile Delta enjoys Mediterranean conditions. Sinai Peninsula is mountainous and cooler. Coastal cities receive modest winter rains.",risks:["Water scarcity","Desertification","Nile Delta sea-level rise","Sandstorms"],econdesc:"Tourism, Suez Canal revenues (~$9B/yr), remittances ($32B), and hydrocarbons are pillars. IMF program since 2016. Currency devalued 40%+ in 2022–24 amid foreign exchange crisis.",wiki:"Egypt"},
+  "Libya":        {indep:"1951",colonial:"Italy (then UK/France administration)",lang:"Arabic",gov:"Transitional — Divided Government",religion:"Islam (Sunni) 97%",politics:"Split between UN-backed GNU in Tripoli and rival eastern parliament since 2014 civil war. UN-facilitated ceasefire holds (2020). Oil revenues key flashpoint. Heavy foreign interference (Turkey, UAE, Russia).",gdp:"$39B",gdppc:"$5,500",growth:"1.1%",inflation:"2.8%",unemploy:"18.7%",currency:"Libyan Dinar (LYD)",exports:["Crude Oil","Natural Gas","Petrochemicals"],blocs:["AU","Arab League","OPEC"],medage:"29.0",lifeexp:"72.6 yrs",fertility:"2.21",urban:"80%",literacy:"91%",hdi:"0.718",climate:["Desert","Mediterranean (coast)"],temp:"21°C avg",rain:"<100mm (S), 400mm (Tripoli)",hot:"July–Aug",rainy:"Nov–Mar (coast)",climdesc:"90%+ is Sahara Desert with extreme heat. Narrow Mediterranean coastal strip (including Tripoli) is milder. Interior features dramatic temperature swings between day and night.",risks:["Desertification","Flash floods","Sand storms"],econdesc:"Near-total oil dependency disrupted by political crisis. National Oil Corporation (NOC) is central institution. Political unification needed for economic recovery.",wiki:"Libya"},
+  "Morocco":      {indep:"1956",colonial:"France and Spain",lang:"Arabic, Amazigh (Tamazight), French",gov:"Constitutional Monarchy",religion:"Islam (Sunni) 99%",politics:"King Mohammed VI holds executive authority. Parliament functions with multi-party competition. 2020 Abraham Accords normalisation with Israel. Strong EU partnership. Candidate for BRICS.",gdp:"$142B",gdppc:"$3,780",growth:"3.4%",inflation:"2.9%",unemploy:"13.0%",currency:"Moroccan Dirham (MAD)",exports:["Phosphates","Automobiles","Aeronautics","Fish","Textiles"],blocs:["AU","Arab League","EU Association","OIC"],medage:"29.3",lifeexp:"76.8 yrs",fertility:"2.36",urban:"64%",literacy:"76%",hdi:"0.683",climate:["Mediterranean","Semi-arid","Desert (SE)"],temp:"19°C avg",rain:"300–1000mm (N)",hot:"July–Aug",rainy:"Oct–Apr",climdesc:"Atlantic coast is mild and moist. Interior plateau is semi-arid. Atlas Mountains create distinct alpine microclimates. Southeast (Draa-Tafilalet) is Saharan. 2023 Al Haouz earthquake heavily impacted Marrakech region.",risks:["Drought","Desertification","Earthquakes","Water stress"],econdesc:"Highly diversified by African standards. World's largest phosphate exporter (OCP Group). Rapidly growing automotive (Renault, Stellantis) and aerospace manufacturing. Largest African solar park (Noor Ouarzazate).",wiki:"Morocco"},
+  "Sudan":        {indep:"1956",colonial:"United Kingdom and Egypt (Anglo-Egyptian Condominium)",lang:"Arabic, English (100+ local languages)",gov:"Transitional — Military Conflict",religion:"Islam (Sunni) 97%",politics:"Military conflict erupted April 2023 between SAF and RSF paramilitary. Deadliest conflict globally by 2024 (UN). Civilian transitional govt (2019–2023) collapsed. Over 8 million displaced.",gdp:"$37B",gdppc:"$750",growth:"-12%",inflation:"256%",unemploy:"22%",currency:"Sudanese Pound (SDG)",exports:["Gold","Crude Oil","Sesame","Livestock","Arabic Gum"],blocs:["AU","Arab League","OIC"],medage:"19.5",lifeexp:"66.1 yrs",fertility:"4.61",urban:"36%",literacy:"61%",hdi:"0.510",climate:["Desert (N)","Semi-arid (C)","Tropical savanna (S)"],temp:"28°C avg",rain:"25–700mm (N-S gradient)",hot:"April–May",rainy:"Jun–Sep (south)",climdesc:"Extreme north is Sahara desert. Central belt is semi-arid Sahel transitioning to tropical in the south. The Nile is the critical lifeline. Prone to drought and flooding cycles.",risks:["Severe drought","Desertification","Nile flooding","Famine","Conflict-driven displacement"],econdesc:"Economy devastated by 2023 civil war. Pre-conflict gold and oil were key exports. WFP warns of famine-level conditions for 18M+ people as of 2024.",wiki:"Sudan"},
+  "Tunisia":      {indep:"1956",colonial:"France",lang:"Arabic, French (widely used)",gov:"Presidential Republic",religion:"Islam (Sunni) 99%",politics:"President Saied consolidated power via 2022 constitution, effectively ending Tunisia's post-Arab Spring democratic experiment. Opposition jailed. IMF bailout negotiations stalled over political conditions.",gdp:"$46B",gdppc:"$3,700",growth:"1.8%",inflation:"9.3%",unemploy:"16.2%",currency:"Tunisian Dinar (TND)",exports:["Olive Oil","Textiles","Phosphates","Dates","Electronics"],blocs:["AU","Arab League","EU Association","OIF"],medage:"32.7",lifeexp:"76.7 yrs",fertility:"2.19",urban:"70%",literacy:"82%",hdi:"0.731",climate:["Mediterranean","Semi-arid (C)","Desert (S)"],temp:"19°C avg",rain:"150–600mm",hot:"July–Aug",rainy:"Oct–Mar",climdesc:"Northern coast has classic Mediterranean climate with warm dry summers. Central plains are semi-arid steppe. Southern Sahara (Saharan Atlas foothills) is hot year-round with rare rainfall.",risks:["Drought","Desertification","Water stress"],econdesc:"Tourism and phosphate exports key. High EU economic integration. Ongoing economic crisis with double-digit unemployment. IMF negotiations reflect fiscal pressures.",wiki:"Tunisia"},
+  "Western Sahara":{indep:"Disputed — 1976 Spanish withdrawal",colonial:"Spain",lang:"Arabic (Hassaniya), Spanish",gov:"Disputed (Morocco de facto; SADR recognized by AU)",religion:"Islam (Sunni) 99%",politics:"Non-self-governing territory per UN. Morocco controls ~80% and treats it as Southern Provinces. Polisario Front (backed by Algeria) administers refugee camps in Tindouf. No referendum held despite UN resolutions since 1991.",gdp:"N/A",gdppc:"N/A",growth:"N/A",inflation:"N/A",unemploy:"N/A",currency:"Moroccan Dirham (Moroccan-controlled area)",exports:["Phosphates (Bou Craa mine)","Fish"],blocs:["AU recognises SADR"],medage:"27.0",lifeexp:"~70 yrs",fertility:"~2.5",urban:"~95%",literacy:"~70%",hdi:"N/A",climate:["Desert"],temp:"25°C avg",rain:"<50mm",hot:"July–Sep",rainy:"Rare (Nov–Feb)",climdesc:"Almost entirely Saharan desert. Extreme continental heat inland. Atlantic coast is cooled by the Canary Current, creating morning fog. Virtually no natural freshwater.",risks:["Desertification","Water scarcity","Sand storms"],econdesc:"Economy controlled by Morocco. Bou Craa phosphate mine is one of the world's largest. Atlantic fisheries under disputed agreements. Territory has significant untapped oil potential.",wiki:"Western_Sahara"},
+  "Nigeria":      {indep:"1960",colonial:"United Kingdom",lang:"English (official), Hausa, Yoruba, Igbo, 500+ local languages",gov:"Federal Presidential Republic (36 states)",religion:"Islam 54%, Christianity 44%, Indigenous 2%",politics:"President Tinubu took office May 2023. Immediate fuel subsidy removal triggered inflation. Boko Haram/ISWAP insurgency persists in northeast. Bandits in northwest. Complex federal-state oil revenue dynamics.",gdp:"$477B",gdppc:"$2,160",growth:"3.3%",inflation:"33.2%",unemploy:"5.0%",currency:"Nigerian Naira (NGN)",exports:["Crude Oil","Liquefied Natural Gas","Cocoa","Rubber","Sesame"],blocs:["AU","ECOWAS","OPEC","Commonwealth","G77"],medage:"17.9",lifeexp:"53.7 yrs",fertility:"5.42",urban:"53%",literacy:"62%",hdi:"0.535",climate:["Tropical humid (S)","Tropical savanna (M)","Semi-arid Sahel (N)"],temp:"27°C avg",rain:"500–2500mm",hot:"Mar–May",rainy:"Apr–Oct (south)",climdesc:"Humid tropical south (Niger Delta, rainforest). Transitional Middle Belt savanna. Sahel in the far north is semi-arid. Harmattan dry winds from Sahara affect north in Nov–Feb.",risks:["Flooding (Niger Delta)","Desertification (N)","Coastal erosion","Drought"],econdesc:"Largest African economy. Oil accounts for ~90% of export earnings and ~50% of government revenue. Naira devalued 65%+ in 2023. CBN under reform. Massive youth population and tech startup ecosystem in Lagos.",wiki:"Nigeria"},
+  "Ghana":        {indep:"1957",colonial:"United Kingdom",lang:"English (official), Akan, Ewe, Dagbani, Twi",gov:"Presidential Republic",religion:"Christianity 71%, Islam 20%, Traditional 9%",politics:"President Mahama returned to power January 2025. Ghana celebrated as a model of democratic transfers since 1992. Defaulted on external debt December 2022; IMF $3B program approved May 2023. Political stability despite economic crisis.",gdp:"$76B",gdppc:"$2,340",growth:"5.7%",inflation:"23.5%",unemploy:"4.7%",currency:"Ghanaian Cedi (GHS)",exports:["Gold","Cocoa","Petroleum","Timber","Bauxite"],blocs:["AU","ECOWAS","Commonwealth","G77"],medage:"21.3",lifeexp:"65.0 yrs",fertility:"3.85",urban:"58%",literacy:"79%",hdi:"0.632",climate:["Tropical (S)","Semi-arid (N)"],temp:"27°C avg",rain:"800–2100mm",hot:"Mar–Apr",rainy:"Apr–Jun and Sep–Nov",climdesc:"Hot and humid southern coast; tropical forest interior. North is drier savanna. Two rainy seasons in south. Harmattan dusty winds blow from Sahara (Nov–Mar), reducing visibility.",risks:["Flooding","Drought (north)","Deforestation","Coastal erosion"],econdesc:"West Africa's gateway economy. Mining (world's 7th largest gold producer), cocoa (2nd largest exporter), and oil. Accra is a growing fintech hub. Debt restructuring completed 2024.",wiki:"Ghana"},
+  "Senegal":      {indep:"1960",colonial:"France",lang:"French (official), Wolof, Pulaar, Serer, Diola",gov:"Presidential Republic",religion:"Islam (predominantly Tijani and Mouride Sufi brotherhoods) 96%, Christianity 4%",politics:"President Bassirou Diomaye Faye elected March 2024 in landmark peaceful transition. Former president Sall respected term limits. Senegal seen as pillar of West African democracy. First offshore oil/gas production began 2024.",gdp:"$31B",gdppc:"$1,750",growth:"7.1%",inflation:"5.8%",unemploy:"4.9%",currency:"West African CFA Franc (XOF, pegged to EUR)",exports:["Fish","Petroleum Products","Phosphates","Gold","Peanut Oil"],blocs:["AU","ECOWAS","OIF","OIC","Francophonie"],medage:"19.4",lifeexp:"69.2 yrs",fertility:"4.50",urban:"49%",literacy:"52%",hdi:"0.514",climate:["Tropical (S)","Sahel / Semi-arid (N)"],temp:"27°C avg",rain:"300–1400mm (S–N gradient)",hot:"May–Jun",rainy:"June–September",climdesc:"Sahelian north is hot and dry. Southern Casamance region is more humid with dense forest. Atlantic coast is cooled by trade winds. Distinct dry (Nov–May) and wet (Jun–Oct) seasons.",risks:["Drought","Coastal erosion","Flooding (Dakar)","Desertification"],econdesc:"Sangomar offshore oil field began production 2024, set to be transformative. Tourism, fishing, phosphate mining, and remittances historically key. CFA franc ties Senegal to Euro monetary policy.",wiki:"Senegal"},
+  "Ethiopia":     {indep:"Never colonised (brief Italian occupation 1936–41)",colonial:"Italy (occupation only)",lang:"Amharic (federal), Oromo, Tigrinya, Somali, 80+ languages",gov:"Federal Parliamentary Republic",religion:"Ethiopian Orthodox Christianity 43%, Islam 34%, Protestant 19%",politics:"PM Abiy Ahmed (Nobel Peace Prize 2019) led country through devastating Tigray War (Nov 2020–Nov 2022; ~500,000 deaths). Ongoing conflict in Amhara and Oromia as of 2024. TPLF peace agreement (Pretoria, 2022).",gdp:"$156B",gdppc:"$1,240",growth:"7.5%",inflation:"28.3%",unemploy:"3.5%",currency:"Ethiopian Birr (ETB)",exports:["Coffee","Oil Seeds","Gold","Khat","Cut Flowers","Meat"],blocs:["AU (HQ in Addis)","IGAD","COMESA","G77"],medage:"19.3",lifeexp:"67.8 yrs",fertility:"4.07",urban:"23%",literacy:"52%",hdi:"0.492",climate:["Highland Temperate (centre)","Tropical (S)","Semi-arid (E)","Desert / Afar (NE)"],temp:"16°C avg (Addis at 2400m)",rain:"200–2000mm",hot:"Feb–May (lowlands)",rainy:"June–September (Kiremt main rains)",climdesc:"Extremely diverse by altitude. Ethiopian Highlands (Addis Ababa at 2400m) are temperate year-round. Afar Depression (Danakil) is one of earth's hottest and lowest points (−125m). Southern lowlands are tropical savanna.",risks:["Drought","Flooding","Locust invasion","Desertification","Famine risk"],econdesc:"Fastest-growing major African economy for over a decade. Coffee (birthplace) is flagship export. Massive infrastructure: GERD dam (5,150MW), Addis–Djibouti railway. Debt restructuring under G20 Common Framework.",wiki:"Ethiopia"},
+  "Kenya":        {indep:"1963",colonial:"United Kingdom",lang:"Swahili (Kiswahili), English (both official), 40+ ethnic languages",gov:"Presidential Republic",religion:"Christianity 84%, Islam 11%, Traditional 2%",politics:"President Ruto in office since Sept 2022. June 2024 nationwide Gen-Z anti-finance-bill protests forced cabinet reshuffle and withdrawal of tax hikes. Active civil society and free press. ICC background of Ruto and Kenyatta.",gdp:"$114B",gdppc:"$2,080",growth:"5.4%",inflation:"5.0%",unemploy:"5.7%",currency:"Kenyan Shilling (KES)",exports:["Tea","Cut Flowers","Coffee","Vegetables","Refined Petroleum"],blocs:["AU","EAC","COMESA","Commonwealth","G77"],medage:"20.5",lifeexp:"69.0 yrs",fertility:"3.41",urban:"29%",literacy:"82%",hdi:"0.601",climate:["Tropical coast","Highland Temperate (Nairobi plateau)","Arid/Semi-arid (NE)"],temp:"22°C avg",rain:"200–1800mm",hot:"January–March",rainy:"Mar–May (Long Rains), Oct–Dec (Short Rains)",climdesc:"Two distinct rainy seasons. Nairobi at 1700m has an equable, spring-like climate year-round. Indian Ocean coast is hot and humid. Turkana basin in the north is hot desert.",risks:["Drought","El Niño flooding","Wildlife-human conflict","Coastal erosion"],econdesc:"East Africa's largest economy. Nairobi is the region's tech and financial hub ('Silicon Savannah'). M-Pesa mobile money pioneer. Tea is the world's leading export by volume. Flower exports to EU dominate global trade.",wiki:"Kenya"},
+  "Tanzania":     {indep:"1961 (Tanganyika); 1964 (Union with Zanzibar)",colonial:"United Kingdom (Tanganyika); Germany then UK (Zanzibar)",lang:"Swahili, English (both official)",gov:"Presidential Republic",religion:"Christianity 61%, Islam 36% (Zanzibar ~97% Muslim)",politics:"President Samia Suluhu Hassan (first female East African president, since 2021). Gradual political liberalisation noted. CCM party has governed continuously since independence. 2025 elections due.",gdp:"$85B",gdppc:"$1,220",growth:"5.0%",inflation:"3.8%",unemploy:"2.6%",currency:"Tanzanian Shilling (TZS)",exports:["Gold","Coffee","Cashew Nuts","Tea","Tobacco","Tourism"],blocs:["AU","EAC","SADC","COMESA"],medage:"17.8",lifeexp:"67.5 yrs",fertility:"4.80",urban:"37%",literacy:"78%",hdi:"0.532",climate:["Tropical coast","Highland Temperate","Semi-arid (central)"],temp:"25°C avg",rain:"500–2000mm",hot:"Jan–Mar (coast)",rainy:"Mar–May and Oct–Dec",climdesc:"Zanzibar and coast are hot and humid. Highlands (Kilimanjaro 5895m, Africa's highest peak) are alpine. Central plateau is semi-arid. Two rainy seasons define the agricultural calendar.",risks:["Drought","Flooding","Sea-level rise (Zanzibar)","Coral bleaching"],econdesc:"Gold mining and Serengeti/Zanzibar tourism are primary earners. Consistent 6–7% pre-COVID growth. Natural gas reserves (LNG) off southern coast under development. TAZARA railway corridor is regional link.",wiki:"Tanzania"},
+  "South Africa": {indep:"1910 (Union); 1994 (end of Apartheid / first democratic elections)",colonial:"United Kingdom (British colonies); Netherlands (Cape Colony origin)",lang:"11 official languages: Zulu, Xhosa, Afrikaans, English, Sotho, Tswana, Tsonga, Swati, Venda, Ndebele, Northern Sotho",gov:"Parliamentary Republic",religion:"Christianity 86%, Traditional 5%, Islam 2%",politics:"ANC lost parliamentary majority May 2024 for first time since 1994. Government of National Unity (GNU) formed under Ramaphosa with DA, IFP. Structural challenges: 33% unemployment, energy loadshedding crisis, high crime. Land reform ongoing debate.",gdp:"$380B",gdppc:"$6,190",growth:"0.6%",inflation:"5.3%",unemploy:"32.9%",currency:"South African Rand (ZAR)",exports:["Gold","Platinum","Diamonds","Automobiles","Iron Ore","Coal"],blocs:["AU","SADC","G20","BRICS+","Commonwealth"],medage:"28.0",lifeexp:"64.9 yrs",fertility:"2.34",urban:"68%",literacy:"95%",hdi:"0.717",climate:["Mediterranean (SW Cape)","Semi-arid (W interior)","Sub-tropical (E coast)","Desert (N Kalahari)"],temp:"17°C avg",rain:"200–1000mm",hot:"Jan–Feb",rainy:"Oct–Apr (E); Jun–Aug (SW Cape)",climdesc:"Exceptional climatic diversity. Cape Town has Mediterranean winters (wet, mild) and dry summers. Johannesburg plateau is temperate. Durban coast is sub-tropical. Kalahari is semi-arid. Kruger area is tropical savanna.",risks:["Drought","Water scarcity","Wildfires (Cape)","El Niño cycles"],econdesc:"Most industrialised African economy. Mining (gold, PGMs, diamonds), finance (Johannesburg Stock Exchange, Africa's largest), automotive manufacturing, and tourism. Structural problems: chronic unemployment, ageing infrastructure, and Eskom energy crisis.",wiki:"South_Africa"},
+  "DR Congo":     {indep:"1960",colonial:"Belgium",lang:"French (official), Lingala, Swahili, Kikongo, Tshiluba",gov:"Presidential Republic",religion:"Christianity 95%, Islam 2%, Traditional 3%",politics:"President Tshisekedi re-elected Dec 2023. M23 rebel group (backed by Rwanda) controls North Kivu. Over 7 million internally displaced — Africa's largest displacement crisis. Mineral wealth fuels conflict.",gdp:"$65B",gdppc:"$650",growth:"6.2%",inflation:"20.8%",unemploy:"N/A",currency:"Congolese Franc (CDF)",exports:["Cobalt","Copper","Coltan","Gold","Diamonds","Timber"],blocs:["AU","SADC","COMESA","EAC","CEEAC"],medage:"17.0",lifeexp:"61.9 yrs",fertility:"6.41",urban:"47%",literacy:"80%",hdi:"0.481",climate:["Equatorial (Congo Basin)","Tropical savanna (S)","Montane (E)"],temp:"26°C avg",rain:"1200–2200mm",hot:"Year-round",rainy:"Year-round (basin); Sep–May (south)",climdesc:"Congo Basin has world's second-largest tropical rainforest. Consistently hot and humid equatorial center. Eastern highlands (Kivu) are cooler and more fertile. Southern savanna is seasonal.",risks:["Flooding","Deforestation","Volcanic (Nyiragongo)","Drought (S)"],econdesc:"Paradox of abundant resources and extreme poverty. World's largest cobalt reserve (70% of global supply), critical for EV batteries. Copper exports surging. Governance and infrastructure remain critical barriers.",wiki:"Democratic_Republic_of_the_Congo"},
+  "Cameroon":     {indep:"1960",colonial:"France (south); United Kingdom (north)",lang:"French, English (both official), 280+ local languages",gov:"Presidential Republic",religion:"Christianity 70%, Islam 20%, Traditional 10%",politics:"President Biya (world's longest-serving non-royal head of state, since 1982) leads Cameroon. Anglophone separatist conflict (Ambazonia) in NW/SW since 2016. Over 700,000 displaced. Boko Haram threat in far north.",gdp:"$48B",gdppc:"$1,670",growth:"4.2%",inflation:"7.4%",unemploy:"N/A",currency:"Central African CFA Franc (XAF)",exports:["Crude Oil","Timber","Cocoa","Cotton","Aluminium"],blocs:["AU","CEMAC","CEEAC","Commonwealth","OIF"],medage:"18.5",lifeexp:"60.5 yrs",fertility:"5.27",urban:"58%",literacy:"77%",hdi:"0.576",climate:["Equatorial (S)","Tropical (C)","Semi-arid (N)","Montane (W highlands)"],temp:"25°C avg",rain:"400–4000mm",hot:"Mar–May",rainy:"Apr–Nov (S)",climdesc:"Dubbed 'Africa in miniature' for its climatic diversity. Humid equatorial south. Tropical center. Mount Cameroon (4095m) is W Africa's highest peak and receives one of Africa's highest rainfalls. Arid Sahel in north.",risks:["Flooding","Drought (N)","Deforestation"],econdesc:"Diversified by Central African standards: oil, timber, cocoa, and agro-industry. Douala is Central Africa's main commercial port. Anglophone conflict severely impacts NW/SW economies.",wiki:"Cameroon"},
+  "Angola":       {indep:"1975",colonial:"Portugal",lang:"Portuguese (official), Umbundu, Kimbundu, Kikongo",gov:"Presidential Republic",religion:"Christianity 90%, Traditional 10%",politics:"President Lourenço in power since 2017, succeeding 38-year Dos Santos era. MPLA dominant party. Significant anti-corruption reforms. First opposition mayor elected in Huambo 2021. 2022 elections contested.",gdp:"$108B",gdppc:"$2,900",growth:"4.1%",inflation:"13.7%",unemploy:"N/A",currency:"Angolan Kwanza (AOA)",exports:["Crude Oil","Diamonds","Coffee","Timber","Fish"],blocs:["AU","SADC","OPEC","CEEAC"],medage:"16.7",lifeexp:"62.1 yrs",fertility:"5.50",urban:"68%",literacy:"72%",hdi:"0.586",climate:["Tropical (N)","Semi-arid (S)","Desert (Namib coast)"],temp:"23°C avg",rain:"100–1500mm",hot:"Oct–Apr",rainy:"Oct–Apr (N)",climdesc:"North is tropical rainforest (Cabinda enclave). Central plateau is highland savanna. South is semi-arid Kalahari. Namib Desert coast is one of the driest places on earth despite ocean proximity (Benguela Current).",risks:["Drought (S)","Flooding (N)","Landmines (civil war legacy)"],econdesc:"Oil accounts for 90% of exports. Post-civil war reconstruction ongoing. Diamond mining second pillar. Angola is a significant Atlantic oil exporter to China and US. Infrastructure investment accelerating.",wiki:"Angola"},
+};
+
+// Population demographics [men%, women%, teens 13-17%, children 0-12%]
+// Derived from UN 2024 age-sex pyramids
+const POP_DEMO = {
+  default:        [49, 51, 10, 29],
+  "Nigeria":      [50, 50,  9, 33],
+  "Ethiopia":     [50, 50, 10, 35],
+  "Egypt":        [51, 49, 10, 27],
+  "South Africa": [49, 51, 10, 24],
+  "Kenya":        [50, 50, 11, 31],
+  "Algeria":      [51, 49, 10, 26],
+  "Morocco":      [50, 50, 10, 25],
+  "Ghana":        [49, 51, 10, 30],
+  "Tanzania":     [50, 50, 11, 33],
+  "DR Congo":     [50, 50, 12, 36],
+  "Sudan":        [50, 50, 11, 34],
+  "Angola":       [49, 51, 12, 36],
+  "Cameroon":     [50, 50, 11, 33],
+  "Senegal":      [49, 51, 11, 32],
+  "Tunisia":      [51, 49,  9, 23],
+  "Libya":        [54, 46, 10, 27],
+};
+
+// Offline fallback tree
+const FALLBACK = {
+  name:"Africa", stats:"54 Countries | 1.4B Population",
+  children:[
+    {name:"Northern Africa",stats:"7 Countries | Oil & Gas Hub",children:[
+      {name:"Algeria",cap:"Algiers",pop:"44,700,000"},{name:"Egypt",cap:"Cairo",pop:"102,300,000"},
+      {name:"Libya",cap:"Tripoli",pop:"6,900,000"},{name:"Morocco",cap:"Rabat",pop:"37,500,000"},
+      {name:"Sudan",cap:"Khartoum",pop:"44,900,000"},{name:"Tunisia",cap:"Tunis",pop:"12,000,000"},
+      {name:"Western Sahara",cap:"El Aaiún",pop:"600,000"}
+    ]},
+    {name:"Western Africa",stats:"17 Countries | ECOWAS",children:[
+      {name:"Nigeria",cap:"Abuja",pop:"218,500,000"},{name:"Ghana",cap:"Accra",pop:"32,400,000"},
+      {name:"Senegal",cap:"Dakar",pop:"17,200,000"},{name:"Côte d'Ivoire",cap:"Yamoussoukro",pop:"27,000,000"},
+      {name:"Mali",cap:"Bamako",pop:"22,400,000"},{name:"Burkina Faso",cap:"Ouagadougou",pop:"22,100,000"},
+      {name:"Niger",cap:"Niamey",pop:"25,200,000"},{name:"Guinea",cap:"Conakry",pop:"13,500,000"},
+      {name:"Benin",cap:"Porto-Novo",pop:"13,000,000"},{name:"Togo",cap:"Lomé",pop:"8,600,000"},
+      {name:"Sierra Leone",cap:"Freetown",pop:"8,400,000"},{name:"Liberia",cap:"Monrovia",pop:"5,200,000"},
+      {name:"Mauritania",cap:"Nouakchott",pop:"4,600,000"},{name:"Gambia",cap:"Banjul",pop:"2,600,000"},
+      {name:"Guinea-Bissau",cap:"Bissau",pop:"2,100,000"},{name:"Cabo Verde",cap:"Praia",pop:"560,000"}
+    ]},
+    {name:"Eastern Africa",stats:"19 Countries",children:[
+      {name:"Ethiopia",cap:"Addis Ababa",pop:"120,300,000"},{name:"Tanzania",cap:"Dodoma",pop:"63,300,000"},
+      {name:"Kenya",cap:"Nairobi",pop:"54,000,000"},{name:"Uganda",cap:"Kampala",pop:"47,100,000"},
+      {name:"Mozambique",cap:"Maputo",pop:"32,800,000"},{name:"Madagascar",cap:"Antananarivo",pop:"28,900,000"},
+      {name:"Malawi",cap:"Lilongwe",pop:"20,400,000"},{name:"Zambia",cap:"Lusaka",pop:"19,500,000"},
+      {name:"Rwanda",cap:"Kigali",pop:"13,800,000"},{name:"Zimbabwe",cap:"Harare",pop:"15,900,000"},
+      {name:"Somalia",cap:"Mogadishu",pop:"17,100,000"},{name:"South Sudan",cap:"Juba",pop:"11,000,000"},
+      {name:"Burundi",cap:"Gitega",pop:"12,600,000"},{name:"Eritrea",cap:"Asmara",pop:"3,500,000"},
+      {name:"Djibouti",cap:"Djibouti City",pop:"1,100,000"},{name:"Comoros",cap:"Moroni",pop:"870,000"},
+      {name:"Mauritius",cap:"Port Louis",pop:"1,270,000"},{name:"Seychelles",cap:"Victoria",pop:"100,000"}
+    ]},
+    {name:"Central Africa",stats:"9 Countries | Congo Basin",children:[
+      {name:"DR Congo",cap:"Kinshasa",pop:"99,000,000"},{name:"Cameroon",cap:"Yaoundé",pop:"27,200,000"},
+      {name:"Chad",cap:"N'Djamena",pop:"17,400,000"},{name:"Congo",cap:"Brazzaville",pop:"5,800,000"},
+      {name:"Central African Rep.",cap:"Bangui",pop:"5,000,000"},{name:"Angola",cap:"Luanda",pop:"34,500,000"},
+      {name:"Gabon",cap:"Libreville",pop:"2,300,000"},{name:"Equatorial Guinea",cap:"Malabo",pop:"1,500,000"},
+      {name:"São Tomé & Príncipe",cap:"São Tomé",pop:"230,000"}
+    ]},
+    {name:"Southern Africa",stats:"5 Countries | Industrialized",children:[
+      {name:"South Africa",cap:"Pretoria",pop:"59,300,000"},{name:"Namibia",cap:"Windhoek",pop:"2,600,000"},
+      {name:"Botswana",cap:"Gaborone",pop:"2,600,000"},{name:"Lesotho",cap:"Maseru",pop:"2,200,000"},
+      {name:"Eswatini",cap:"Mbabane",pop:"1,200,000"}
+    ]}
+  ]
+};
+
+const REGION_COLORS = ["#C2185B","#1565C0","#2E7D32","#E65100","#6A1B9A"];
+const ROOT_COLOR    = "#360800";
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const res = await fetch("https://restcountries.com/v3.1/region/africa?fields=name,capital,subregion,population,flags,languages,currencies,area");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    render(buildHierarchy(await res.json()));
+  } catch(err) {
+    console.warn("Live API failed:", err);
+    showError("Live data unavailable — offline dataset loaded.");
+    render(FALLBACK);
+  }
+}
+
+function buildHierarchy(countries) {
+  const map = new Map();
+  countries.forEach(c => {
+    const sub = c.subregion || "Other Africa";
+    if (!map.has(sub)) map.set(sub,[]);
+    map.get(sub).push({
+      name: c.name.common, cap: c.capital?.[0]??"N/A",
+      pop: c.population?.toLocaleString()??"N/A", popRaw: c.population,
+      flag: c.flags?.svg??"",
+      lang: c.languages ? Object.values(c.languages).join(", ") : "N/A",
+      area: c.area ? c.area.toLocaleString()+" km²" : "N/A",
+      currency: c.currencies ? Object.values(c.currencies).map(x=>x.name).join(", ") : "N/A",
+    });
+  });
+  return {
+    name:"Africa", stats:"54 Countries | 1.4B Population",
+    children: Array.from(map.entries()).map(([sub,kids])=>({
+      name: sub, stats:`${kids.length} Countries`, children: kids
+    }))
+  };
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render(data) {
+  const container = document.getElementById("radial-tree").parentElement;
+  currentWidth  = container.clientWidth;
+  currentHeight = container.clientHeight;
+  const radius  = Math.min(currentWidth, currentHeight) / 2.55;
+
+  svgEl = d3.select("#radial-tree").attr("width",currentWidth).attr("height",currentHeight);
+  svgEl.selectAll("*").remove();
+  gEl = svgEl.append("g");
+
+  zoomBehavior = d3.zoom().scaleExtent([0.25,10]).on("zoom",e=>gEl.attr("transform",e.transform));
+  svgEl.call(zoomBehavior);
+
+  const root = d3.tree().size([2*Math.PI, radius])(
+    d3.hierarchy(data).sort((a,b)=>d3.ascending(a.data.name,b.data.name))
+  );
+
+  const regionNames = root.children?.map(d=>d.data.name)??[];
+  const colorScale  = d3.scaleOrdinal(regionNames, REGION_COLORS);
+  const nodeColor   = d => d.depth===0 ? ROOT_COLOR : d.depth===1 ? colorScale(d.data.name) : colorScale(d.parent.data.name);
+
+  linksEl = gEl.append("g").selectAll("path").data(root.links()).join("path")
+    .attr("class","link").attr("d",d3.linkRadial().angle(d=>d.x).radius(d=>d.y));
+
+  nodesEl = gEl.append("g").selectAll("g").data(root.descendants()).join("g")
+    .attr("class","node")
+    .attr("transform",d=>`rotate(${d.x*180/Math.PI-90}) translate(${d.y},0)`)
+    .style("cursor",d=>d.depth>0?"pointer":"default")
+    .on("click",(event,d)=>{ event.stopPropagation(); if(d.depth>0) showDetails(d); })
+    .on("pointerenter",(event,d)=>showTooltip(event,d))
+    .on("pointermove",event=>moveTooltip(event))
+    .on("pointerleave",()=>hideTooltip());
+
+  nodesEl.append("circle")
+    .attr("r",d=>d.depth===0?13:d.depth===1?9:5)
+    .attr("fill",d=>nodeColor(d))
+    .attr("stroke","#fff")
+    .attr("stroke-width",d=>d.depth===0?3:1.5);
+
+  nodesEl.append("text")
+    .attr("dy","0.31em")
+    .attr("x",d=>d.x<Math.PI===!d.children?12:-12)
+    .attr("text-anchor",d=>d.x<Math.PI===!d.children?"start":"end")
+    .attr("transform",d=>d.x>=Math.PI?"rotate(180)":null)
+    .style("font-size",d=>d.depth===0?"13px":d.depth===1?"12px":"10px")
+    .style("font-weight",d=>d.depth<=1?"600":"400")
+    .style("fill","#1C1B1F").style("pointer-events","none")
+    .text(d=>d.data.name);
+
+  svgEl.on("click",()=>{ nodesEl.classed("dimmed",false); closePanel(); });
+
+  // Search
+  d3.select("#node-search").on("input",function(){
+    const term=this.value.trim().toLowerCase();
+    document.getElementById("search-clear").classList.toggle("hidden",!term);
+    if(!term){ nodesEl.classed("dimmed",false); linksEl.classed("dimmed",false); return; }
+    const match=d=>d.data.name?.toLowerCase().includes(term)||d.data.cap?.toLowerCase().includes(term);
+    nodesEl.classed("dimmed",d=>!match(d));
+    linksEl.classed("dimmed",true);
+    const first=root.descendants().find(match);
+    if(first) panTo(first,2);
+  });
+  document.getElementById("search-clear").addEventListener("click",()=>{
+    document.getElementById("node-search").value="";
+    document.getElementById("node-search").dispatchEvent(new Event("input"));
+  });
+
+  hideLoading();
+  resetZoom();
+}
+
+// ── Tooltip ───────────────────────────────────────────────────────────────────
+const tooltipEl = document.getElementById("tooltip");
+function showTooltip(event,d){
+  if(d.depth===0) return;
+  tooltipEl.innerHTML = d.depth===1
+    ? `<strong>${d.data.name}</strong><br>${d.data.stats??""}`
+    : `<strong>${d.data.name}</strong><br>Capital: ${d.data.cap??"N/A"}`+(d.data.pop?`<br>Pop: ${d.data.pop}`:"");
+  tooltipEl.style.visibility="visible";
+  moveTooltip(event);
+}
+function moveTooltip(e){ tooltipEl.style.left=`${Math.min(e.clientX+14,innerWidth-230)}px`; tooltipEl.style.top=`${Math.max(e.clientY-10,8)}px`; }
+function hideTooltip(){ tooltipEl.style.visibility="hidden"; }
+
+// ── Panel ─────────────────────────────────────────────────────────────────────
+function showDetails(d) {
+  if(d.depth===0) return;
+  nodesEl.classed("dimmed",nd=>nd!==d&&nd.parent!==d&&nd!==d.parent);
+
+  const name = d.data.name;
+  const db   = DB[name] || {};
+  currentWikiSlug = db.wiki || name.replace(/ /g,"_");
+
+  // Header
+  set("panel-title",   name);
+  set("panel-subtitle", d.depth===2 ? d.parent.data.name+" Region" : "Sub-regional Hub");
+  const fl = document.getElementById("panel-flag");
+  fl.src = d.data.flag||""; fl.alt = name+" flag";
+
+  // ── Overview
+  set("ov-capital",   d.data.cap || "—");
+  set("ov-indep",     db.indep    || "—");
+  set("ov-colonial",  db.colonial || "—");
+  set("ov-gov",       db.gov      || "—");
+  set("ov-lang",      db.lang     || d.data.lang || "—");
+  set("ov-area",      db.area     || d.data.area || "—");
+  set("ov-religion",  db.religion || "—");
+  set("ov-politics",  db.politics || "Detailed political data available for featured countries.");
+  chips("ov-blocs",   db.blocs||[], "chip");
+
+  // Wikipedia (async, non-blocking)
+  const wikiEl = document.getElementById("wiki-summary");
+  wikiEl.textContent=""; wikiEl.className="text-xs text-[#49454F] leading-relaxed skel"; wikiEl.style.minHeight="60px";
+  fetchWiki(name, db.wiki);
+
+  // ── Economy
+  set("ec-gdp",       db.gdp       || "—");
+  set("ec-gdppc",     db.gdppc     || "—");
+  set("ec-growth",    db.growth    || "—");
+  set("ec-inflation", db.inflation || "—");
+  set("ec-unemploy",  db.unemploy  || "—");
+  set("ec-currency",  db.currency  || d.data.currency || "—");
+  set("ec-desc",      db.econdesc  || "Detailed economic data available for featured countries.");
+  chips("ec-exports", db.exports||[], "chip");
+
+  // ── People
+  const pop    = d.data.pop || (d.data.popRaw?.toLocaleString()) || "—";
+  const popRaw = d.data.popRaw || 0;
+  set("pe-total", pop);
+
+  const demo = POP_DEMO[name] || POP_DEMO.default;
+  const [mPct,wPct,tPct,cPct] = demo;
+  setW("pb-men",mPct); setW("pb-women",wPct); setW("pb-teens",tPct); setW("pb-child",cPct);
+  const fmt = pct => (popRaw ? fmtN(Math.round(popRaw*pct/100)) : "") + ` (${pct}%)`;
+  set("pe-men",   fmt(mPct)); set("pe-women",fmt(wPct));
+  set("pe-teens", fmt(tPct)); set("pe-child",fmt(cPct));
+
+  set("pe-medage",    db.medage    ? db.medage+" yrs"        : "—");
+  set("pe-lifeexp",   db.lifeexp   || "—");
+  set("pe-fertility", db.fertility ? db.fertility+" births/woman" : "—");
+  set("pe-urban",     db.urban     || "—");
+  set("pe-literacy",  db.literacy  || "—");
+  set("pe-hdi",       db.hdi       || "—");
+
+  // ── Climate
+  const czEl = document.getElementById("cl-zones");
+  czEl.innerHTML="";
+  (db.climate||["Tropical"]).forEach(z=>{
+    const s=document.createElement("span"); s.className="climate-badge";
+    s.innerHTML=`<span class="material-symbols-outlined" style="font-size:14px">wb_sunny</span>${z}`;
+    czEl.appendChild(s);
+  });
+  set("cl-temp",  db.temp     || "—");
+  set("cl-rain",  db.rain     || "—");
+  set("cl-hot",   db.hot      || "—");
+  set("cl-rainy", db.rainy    || "—");
+  set("cl-desc",  db.climdesc || "Climate data available for featured countries.");
+  chips("cl-risks", db.risks||[], "chip");
+
+  // Reset to overview tab
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+  document.querySelector('[data-tab="overview"]').classList.add("active");
+  document.getElementById("tab-overview").classList.add("active");
+
+  // Open panel
+  const panel = document.getElementById("details-panel");
+  panel.classList.add("open");
+  panel.setAttribute("aria-hidden","false");
+
+  const offset = innerWidth>768 ? -currentWidth/5 : 0;
+  panTo(d, 1.4, offset);
+}
+
+async function fetchWiki(name, slug) {
+  const el   = document.getElementById("wiki-summary");
+  const key  = (slug || name).replace(/ /g,"_");
+  try {
+    const res  = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(key)}`);
+    if(!res.ok) throw new Error("404");
+    const json = await res.json();
+    const text = json.extract
+      ? json.extract.split(". ").slice(0,4).join(". ")+"."
+      : "No Wikipedia summary available.";
+    el.textContent = text;
+    el.className   = "text-xs text-[#49454F] leading-relaxed";
+    el.style.minHeight = "";
+  } catch {
+    el.textContent = `${name} is a country in Africa. Wikipedia data could not be loaded.`;
+    el.className   = "text-xs text-[#49454F] leading-relaxed";
+    el.style.minHeight = "";
+  }
+}
+
+function openWiki(){
+  window.open(`https://en.wikipedia.org/wiki/${encodeURIComponent(currentWikiSlug)}`,"_blank","noopener,noreferrer");
+}
+
+function closePanel(){
+  document.getElementById("details-panel").classList.remove("open");
+  document.getElementById("details-panel").setAttribute("aria-hidden","true");
+  nodesEl?.classed("dimmed",false);
+  resetZoom();
+}
+
+// ── Zoom ──────────────────────────────────────────────────────────────────────
+function panTo(d, scale=1.5, xOffset=0){
+  const a=d.x-Math.PI/2;
+  const x=currentWidth/2+xOffset-d.y*Math.cos(a)*scale;
+  const y=currentHeight/2-d.y*Math.sin(a)*scale;
+  svgEl.transition().duration(650).call(zoomBehavior.transform, d3.zoomIdentity.translate(x,y).scale(scale));
+}
+function resetZoom(){
+  if(!svgEl||!zoomBehavior) return;
+  svgEl.transition().duration(750).call(zoomBehavior.transform, d3.zoomIdentity.translate(currentWidth/2,currentHeight/2).scale(1));
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function set(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+function setW(id,p){ const el=document.getElementById(id); if(el) el.style.width=p+"%"; }
+function fmtN(n){ return n>=1e9?(n/1e9).toFixed(2)+"B":n>=1e6?(n/1e6).toFixed(1)+"M":n.toLocaleString(); }
+function chips(id,arr,cls){
+  const el=document.getElementById(id); if(!el) return; el.innerHTML="";
+  if(!arr.length){ el.textContent="—"; return; }
+  arr.forEach(v=>{ const s=document.createElement("span"); s.className=cls; s.textContent=v; el.appendChild(s); });
+}
+function hideLoading(){
+  const el=document.getElementById("loading");
+  el.style.transition="opacity .4s"; el.style.opacity="0";
+  setTimeout(()=>el.style.display="none",400);
+}
+function showError(msg){ document.getElementById("error-msg").textContent=msg; document.getElementById("error-banner").classList.remove("hidden"); }
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+  });
+});
+
+// ── Nav sync (desktop rail + mobile bottom) ───────────────────────────────────
+document.querySelectorAll("[data-nav]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const key=btn.dataset.nav;
+    document.querySelectorAll("[data-nav]").forEach(b=>{ b.classList.toggle("active", b.dataset.nav===key); });
+    document.querySelectorAll("[data-nav]").forEach(b=>b.setAttribute("aria-current", b.dataset.nav===key?"page":"false"));
+  });
+});
+
+// ── Resize (debounced) ────────────────────────────────────────────────────────
+function onResize(){
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{
+    const c=document.getElementById("radial-tree")?.parentElement;
+    if(!c||!svgEl) return;
+    const nw=c.clientWidth, nh=c.clientHeight;
+    if(Math.abs(nw-currentWidth)<20&&Math.abs(nh-currentHeight)<20) return;
+    currentWidth=nw; currentHeight=nh;
+    svgEl.attr("width",nw).attr("height",nh);
+    resetZoom();
+  },200);
+}
+
+document.addEventListener("DOMContentLoaded", init);
+window.addEventListener("resize", onResize);
+</script>
+</body>
+</html>
